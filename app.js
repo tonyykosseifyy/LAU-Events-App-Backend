@@ -5,8 +5,14 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 require('./utils/database')
 
-// const indexRouter = require('./routes/index');
-// const usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
+const clubRouter = require('./routes/club');
+const eventRouter = require('./routes/event');
+const userRouter = require('./routes/users');
+const userClubRouter = require('./routes/userClub');
+const userEventRouter = require('./routes/userEvent');
 
 
 
@@ -22,8 +28,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
+app.use('/', indexRouter);
+app.use('/admins', adminRouter);
+app.use('/clubs', clubRouter);
+app.use('/events', eventRouter);
+app.use('/users', userRouter);
+app.use('/userClubs', userClubRouter);
+app.use('/userEvents', userEventRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

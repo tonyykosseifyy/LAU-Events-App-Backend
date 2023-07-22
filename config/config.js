@@ -11,6 +11,7 @@ module.exports = {
                 dialect: 'mysql',
                 username: env.DB_USERNAME || 'root',
                 password: env.DB_PASS || '',
+                logging: false
             },
             client: null
         },

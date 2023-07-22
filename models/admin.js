@@ -8,11 +8,6 @@ module.exports = (sequelize, DataTypes) => {
           model: 'Users',
           key: 'id'
         }
-      },
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false
       }
     });
     return Admin;
