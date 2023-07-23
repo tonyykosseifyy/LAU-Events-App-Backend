@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
+const { User } = require('../models');
 
 
 const { TokenExpiredError } = jwt;
@@ -29,6 +30,19 @@ const isAuthenticated = (req, res, next) => {
   });
 };
 
-module.exports = {
-  isAuthenticated
+const isAdmin = async (req, res, next) => {
+  const userId = req.userId ;
+
+  const user = await User.findByPk(userId);
+  const role = user.userType ;
+
+  if (role === 'Admin') {
+    return next();
+  }
+  return res.status(403).send({ message: "Require Admin Role!" });
 }
+
+module.exports = {
+  isAuthenticated,
+  isAdmin 
+};

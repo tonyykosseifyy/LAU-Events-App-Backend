@@ -17,7 +17,7 @@ const userEventRouter = require('./routes/userEvent');
 const authRouter = require('./routes/auth');
 const tokenRouter = require('./routes/refreshToken');
 
-const { isAuthenticated } = require('./middlewares/authJwt');
+const { isAuthenticated, isAdmin } = require('./middlewares/authJwt');
 
 const app = express();
 
@@ -42,7 +42,7 @@ app.use((req, res, next) => {
 
 
 app.use('/', indexRouter);
-app.use('/admins', adminRouter);
+app.use('/admins',isAdmin, adminRouter);
 app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
 app.use('/users', userRouter);
