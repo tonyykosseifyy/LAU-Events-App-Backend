@@ -4,7 +4,7 @@ const config = require("../config/auth.config");
 const { refreshToken: RefreshToken, User } = db;
 
 
-const loginSchema = require('../validations/loginSchema');
+const loginSchema = require('../validations/auth/loginSchema');
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
