@@ -1,5 +1,5 @@
 module.exports = {
-  secret: "bezkoder-secret-key",
+  secret: "lau-event-secret-key",
   jwtExpiration: 60 ,           // 1 min
   jwtRefreshExpiration: 620,   // 24 
 
