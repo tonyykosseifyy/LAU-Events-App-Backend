@@ -2,6 +2,7 @@ const db = require("../models");
 const config = require("../config/auth.config");
 const { user: User, refreshToken: RefreshToken } = db;
 
+
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
@@ -87,3 +88,4 @@ exports.refreshToken = async (req, res) => {
     return res.status(500).send({ message: err });
   }
 };
+
