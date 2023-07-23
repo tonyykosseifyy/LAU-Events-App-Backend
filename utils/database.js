@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const config = require('../config/config.js');
-const sequelize = new Sequelize(config.development.mySql.options)
+const sequelize = new Sequelize(config.development.mySql.options);
 
 const connectToDB = async () => {
     try {
@@ -23,6 +23,6 @@ const syncronizeDB = async () => {
 connectToDB()
 config.development.mySql.client = sequelize
 require('../models/index.js')
-syncronizeDB()
+syncronizeDB({force: true})
 
 

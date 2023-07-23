@@ -22,8 +22,13 @@ module.exports = (sequelize, DataTypes) => {
       userType: {
         type: DataTypes.ENUM('Admin', 'User'),
         allowNull: false
-      }
+      },
     });
+
+    User.associate = models => {
+      User.hasOne(models.refreshToken);
+    }
+
     return User;
-  };
+};
   

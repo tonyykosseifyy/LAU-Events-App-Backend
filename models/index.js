@@ -36,19 +36,4 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-
-// establish user - refresh token one-to-one relation
-db.user = require("../models/user.js")(sequelize, Sequelize);
-db.refreshToken = require("../models/refreshToken.js")(sequelize, Sequelize);
-
-
-db.refreshToken.belongsTo(db.user, {
-  foreignKey: 'userId', targetKey: 'id'
-});
-
-db.user.hasOne(db.refreshToken, {
-  foreignKey: 'userId', targetKey: 'id'
-});
-
-
 module.exports = db;

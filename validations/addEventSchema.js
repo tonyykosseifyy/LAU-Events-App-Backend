@@ -1,3 +1,5 @@
+const Joi = require('joi');
+
 const addEventSchema = Joi.object({
     eventName: Joi.string()
         .min(1)

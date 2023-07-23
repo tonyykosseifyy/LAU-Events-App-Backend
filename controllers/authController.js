@@ -1,16 +1,61 @@
 const db = require("../models");
 const config = require("../config/auth.config");
 const { user: User, refreshToken: RefreshToken } = db;
-
+const loginSchema = require('../validations/loginSchema');
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+exports.signup = async (req, res) => {
+  const { error } = loginSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  const old_user = await User.findOne({
+    where: {
+      username: req.body.username,
+    }
+  })
+  if ( old_user ) {
+    return res.status(400).json({ error: "Username already exists" });
+  }
+
+  try {
+    const user = await User.create({
+      username: req.body.username,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
+      userType: 'User'
+    })
+    const token = jwt.sign({ id: user.id }, config.secret, {
+      expiresIn: config.jwtExpiration
+    });
+    console.log('creating token')
+    let refreshToken = await RefreshToken.createToken(user);
+    
+    res.status(201).send({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      accessToken: token,
+      refreshToken: refreshToken,
+    });
+  } catch(err) {
+    res.status(500).send({ message: err.message });
+  }
+}
 
 exports.signin = (req, res) => {
+  const { error } = loginSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   User.findOne({
     where: {
-      email: req.body.email,
+      username: req.body.username,
     }
   })
     .then(async (user) => {
