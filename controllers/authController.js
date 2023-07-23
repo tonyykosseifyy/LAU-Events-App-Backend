@@ -136,3 +136,12 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
+exports.signout = async (req, res) => {
+  const user_id = req.userId;
+  try {
+    await RefreshToken.destroy({ where: { user_id } });
+    res.status(200).send({ message: "User was logged out!" });
+  } catch(err) {
+    res.status(500).send({ message: err.message });
+  }
+}

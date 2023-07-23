@@ -17,6 +17,8 @@ const userEventRouter = require('./routes/userEvent');
 const authRouter = require('./routes/auth');
 const tokenRouter = require('./routes/refreshToken');
 
+const { isAuthenticated } = require('./middlewares/authJwt');
+
 const app = express();
 
 // view engine setup
@@ -28,6 +30,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// authenticated middleware for all routes except /auth
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/auth')) {
+    isAuthenticated(req, res, next);
+  } else {
+    next();
+  }
+});
+
 
 app.use('/', indexRouter);
 app.use('/admins', adminRouter);

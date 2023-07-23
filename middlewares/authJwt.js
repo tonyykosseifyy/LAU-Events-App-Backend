@@ -9,15 +9,16 @@ const catchError = (err, res) => {
     return res.status(401).send({ message: "Unauthorized! Access Token was expired!" });
   }
 
-  return res.sendStatus(401).send({ message: "Unauthorized!" });
+  return res.status(401).send({ message: "Unauthorized!" });
 }
 
-const verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
+const isAuthenticated = (req, res, next) => {
+  let bearer_token = req.headers['authorization'] ;
 
-  if (!token) {
+  if (!bearer_token) {
     return res.status(403).send({ message: "No token provided!" });
   }
+  const token = bearer_token.split(' ')[1];
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
@@ -27,3 +28,7 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
+
+module.exports = {
+  isAuthenticated
+}

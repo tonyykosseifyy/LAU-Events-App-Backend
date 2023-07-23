@@ -4,4 +4,3 @@ const defaultCruds = require('./defaultCruds.js')
 
 
 exports.getAll = defaultCruds.getAll(RefreshToken);
-
