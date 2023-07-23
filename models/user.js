@@ -25,10 +25,6 @@ module.exports = (sequelize, DataTypes) => {
       },
     });
 
-    User.associate = models => {
-      User.hasOne(models.refreshToken);
-    }
-
     return User;
 };
   

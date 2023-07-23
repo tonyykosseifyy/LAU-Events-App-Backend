@@ -1,6 +1,9 @@
 const db = require("../models");
 const config = require("../config/auth.config");
-const { user: User, refreshToken: RefreshToken } = db;
+
+const { refreshToken: RefreshToken, User } = db;
+
+
 const loginSchema = require('../validations/loginSchema');
 
 const jwt = require("jsonwebtoken");
@@ -12,12 +15,14 @@ exports.signup = async (req, res) => {
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
   }
+
   const old_user = await User.findOne({
     where: {
       username: req.body.username,
     }
   })
-  if ( old_user ) {
+
+  if (old_user) {
     return res.status(400).json({ error: "Username already exists" });
   }
 

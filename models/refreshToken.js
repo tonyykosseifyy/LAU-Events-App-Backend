@@ -14,19 +14,16 @@ module.exports = (sequelize, Sequelize) => {
     expiryDate: {
       type: Sequelize.DATE,
     },
-    userId: {
+    user_id: {
       type: Sequelize.INTEGER,
       allowNull: false,
       references: {
-        model: 'User',
+        model: 'Users',
         key: 'id'
       }
     },
   });
 
-  RefreshToken.associate = models => {
-    RefreshToken.belongsTo(models.User);
-  }
 
   RefreshToken.createToken = async function (user) {
     let expiredAt = new Date();
@@ -37,7 +34,7 @@ module.exports = (sequelize, Sequelize) => {
 
     let refreshToken = await this.create({
       token: _token,
-      userId: user.id,
+      user_id: user.id,
       expiryDate: expiredAt.getTime(),
     });
 
