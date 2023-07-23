@@ -7,7 +7,6 @@ const getAll = defaultCruds.getAll(Admin)
 const getOne = defaultCruds.getOne(Admin)
 const create = async (req, res, next) => {
     try {
-        console.log(req.body)
         const output = await Admin.create(req.body)
         const user = await User.findByPk(req.body.id)
         await user.update({userType: "Admin"})
@@ -25,7 +24,7 @@ const deleteOne = async (req, res, next) => {
       }
       await output.destroy();
       const user = await User.findByPk(req.params.id)
-        await user.update({userType: "User"})
+      await user.update({userType: "User"})
       respond(res, 204, { message: 'Item deleted successfully' });
     } catch (err) {
       next(err);

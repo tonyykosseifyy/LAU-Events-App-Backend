@@ -27,9 +27,15 @@ const getOne = (Model) => {
     }
 }
 
-const create = (Model) => {
+const create = (Model, schema) => {
     return async (req, res, next) => {
         try {
+            if (schema){
+                const {error} = schema.validate(req.body);
+                if (error) {
+                    return respond(res, 400, error.details[0].message);
+                }
+            }
             const output = await Model.create(req.body)
             return respond(res, 201, output)
         } catch (err) {
