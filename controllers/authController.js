@@ -3,7 +3,7 @@ const config = require("../config/auth.config");
 
 const { refreshToken: RefreshToken, User } = db;
 
-const { loginSchema, signupSchema } = require('../validations/auth');
+const { loginSchema, signupSchema, refreshTokenSchema } = require('../validations/auth');
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -94,6 +94,11 @@ exports.signin = async (req, res) => {
 };
 
 exports.refreshToken = async (req, res) => {
+  const { error } = refreshTokenSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { refreshToken: requestToken } = req.body;
 
   if (requestToken == null) {
@@ -116,9 +121,8 @@ exports.refreshToken = async (req, res) => {
       });
       return;
     }
-    console.log('getting the user');
     const user_id = refreshToken.user_id;
-    console.log('got the user')
+
     let newAccessToken = jwt.sign({ id: user_id }, config.secret, {
       expiresIn: config.jwtExpiration,
     });
