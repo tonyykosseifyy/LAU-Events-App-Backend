@@ -3,14 +3,13 @@ const config = require("../config/auth.config");
 
 const { refreshToken: RefreshToken, User } = db;
 
-
-const loginSchema = require('../validations/auth/loginSchema');
+const { loginSchema, signupSchema } = require('../validations/auth');
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 exports.signup = async (req, res) => {
-  const { error } = loginSchema.validate(req.body);
+  const { error } = signupSchema.validate(req.body);
 
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
@@ -36,7 +35,7 @@ exports.signup = async (req, res) => {
     const token = jwt.sign({ id: user.id }, config.secret, {
       expiresIn: config.jwtExpiration
     });
-    console.log('creating token')
+
     let refreshToken = await RefreshToken.createToken(user);
     
     res.status(201).send({
@@ -51,52 +50,47 @@ exports.signup = async (req, res) => {
   }
 }
 
-exports.signin = (req, res) => {
+exports.signin = async (req, res) => {
   const { error } = loginSchema.validate(req.body);
 
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
   }
 
-  User.findOne({
+  const user = await User.findOne({
     where: {
       username: req.body.username,
     }
   })
-    .then(async (user) => {
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
+  if (!user) {
+    return res.status(404).send({ message: "User Not found." });
+  }
 
-      const passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
+  const passwordIsValid = bcrypt.compareSync(
+    req.body.password,
+    user.password
+  );
 
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!"
-        });
-      }
-
-      const token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: config.jwtExpiration
-      });
-
-      let refreshToken = await RefreshToken.createToken(user);
-
-      res.status(200).send({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        accessToken: token,
-        refreshToken: refreshToken,
-      });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
+  if (!passwordIsValid) {
+    return res.status(401).send({
+      accessToken: null,
+      message: "Invalid Password!"
     });
+  }
+
+  const token = jwt.sign({ id: user.id }, config.secret, {
+    expiresIn: config.jwtExpiration
+  });
+
+  let refreshToken = await RefreshToken.createToken(user);
+
+  res.status(200).send({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    accessToken: token,
+    refreshToken: refreshToken,
+  });
 };
 
 exports.refreshToken = async (req, res) => {
@@ -108,8 +102,6 @@ exports.refreshToken = async (req, res) => {
 
   try {
     let refreshToken = await RefreshToken.findOne({ where: { token: requestToken } });
-
-    console.log(refreshToken)
 
     if (!refreshToken) {
       res.status(403).json({ message: "Refresh token is not in database!" });
@@ -124,9 +116,10 @@ exports.refreshToken = async (req, res) => {
       });
       return;
     }
-
-    const user = await refreshToken.getUser();
-    let newAccessToken = jwt.sign({ id: user.id }, config.secret, {
+    console.log('getting the user');
+    const user_id = refreshToken.user_id;
+    console.log('got the user')
+    let newAccessToken = jwt.sign({ id: user_id }, config.secret, {
       expiresIn: config.jwtExpiration,
     });
 
