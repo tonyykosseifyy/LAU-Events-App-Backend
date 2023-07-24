@@ -14,7 +14,10 @@ const userRouter = require('./routes/users');
 const userClubRouter = require('./routes/userClub');
 const userEventRouter = require('./routes/userEvent');
 
+const authRouter = require('./routes/auth');
+const tokenRouter = require('./routes/refreshToken');
 
+const { isAuthenticated, isAdmin } = require('./middlewares/authJwt');
 
 const app = express();
 
@@ -28,14 +31,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// authenticated middleware for all routes except /auth
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/auth')) {
+    isAuthenticated(req, res, next);
+  } else {
+    next();
+  }
+});
+
+
 app.use('/', indexRouter);
-app.use('/admins', adminRouter);
+app.use('/admins',isAdmin, adminRouter);
 app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
 app.use('/users', userRouter);
 app.use('/userClubs', userClubRouter);
 app.use('/userEvents', userEventRouter);
 
+app.use('/auth', authRouter);
+app.use('/refreshToken', tokenRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

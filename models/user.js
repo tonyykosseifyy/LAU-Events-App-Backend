@@ -22,8 +22,9 @@ module.exports = (sequelize, DataTypes) => {
       userType: {
         type: DataTypes.ENUM('Admin', 'User'),
         allowNull: false
-      }
+      },
     });
+
     return User;
-  };
+};
   
