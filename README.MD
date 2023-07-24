@@ -26,5 +26,5 @@ Now open a terminal and run the following command
 
 ```bash
 # development
-$ npm run start
+$ npm start dev
 ```
