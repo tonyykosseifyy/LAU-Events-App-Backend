@@ -2,16 +2,29 @@ const respond = require('../utils/respond.js')
 
 
 const getAll = (Model) => {
-    console.log("Model: ", Model)
     return async (req, res, next) => {
         try {
             const output = await Model.findAll()
-            respond(res, 200, output)
+            res && respond(res, 200, output)
         } catch (err) {
             next(err)
         }
     }
 }
+
+const findOne = (Model) => {
+    return async (whereClause, res) => {
+      try {
+        const output = await Model.findOne({ where: whereClause });
+        if (!output) {
+          return respond(res, 404, { message: "Item not found" });
+        }
+        return output;
+      } catch (err) {
+        console.log(err)
+      }
+    };
+  };
 
 const getOne = (Model) => {
     return async (req, res, next) => {
@@ -20,7 +33,7 @@ const getOne = (Model) => {
             if (!output){
                 return respond(res, 404, {message: "Item not found"})
             }
-            respond(res, 200, output)
+            res && respond(res, 200, output)
         } catch (err) {
             next(err)
         }
@@ -36,10 +49,11 @@ const create = (Model, schema) => {
                     return respond(res, 400, error.details[0].message);
                 }
             }
+
             const output = await Model.create(req.body)
-            return respond(res, 201, output)
+            return output
         } catch (err) {
-            next(err)
+            console.log(err)
         }
     }
 }
@@ -47,17 +61,25 @@ const create = (Model, schema) => {
 const update = (Model) => {
     return async (req, res, next) => {
         try {
-            const output = await Model.findByPk(req.params.id)
+            let output;
+            if(req.body.where){
+                output = await Model.findOne({ where: req.body.where })
+            } else {
+                output = await Model.findByPk(req.params.id)
+            }
+
             if (!output){
                 return respond(res, 404, {message: "Item not found"})
             }
+
             await output.update(req.body)
-            respond(res, 200, output)
+            return respond(res, 200, output)
         } catch(err){
-            next(err)
+            res && respond(res, 500, {message: err.message})
         }
     }
 }
+
 
 const deleteOne = (Model) => {
     return async (req, res, next) => {
@@ -67,7 +89,7 @@ const deleteOne = (Model) => {
             return respond(res, 404, { message: 'Item not found' })
           }
           await output.destroy();
-          respond(res, 204, { message: 'Item deleted successfully' });
+          res && respond(res, 204, { message: 'Item deleted successfully' });
         } catch (err) {
           next(err);
         }
@@ -79,5 +101,6 @@ module.exports = {
     getOne,
     create,
     update,
-    deleteOne
+    deleteOne,
+    findOne
 }
