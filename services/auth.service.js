@@ -20,8 +20,6 @@ async function hashPassword(password) {
 }
 
 async function verifyPassword(password, hashedPassword) {
-    console.log("password: ", password)
-    console.log("hashedPassword: ", hashedPassword)
     const isValid = await bcrypt.compare(password, hashedPassword);
     
     return isValid;
