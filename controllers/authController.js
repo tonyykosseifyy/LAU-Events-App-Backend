@@ -1,34 +1,21 @@
-const db = require("../models");
-const config = require("../config/auth.config");
-
-const { refreshToken: RefreshToken, User } = db;
-
-const { loginSchema, signupSchema, refreshTokenSchema } = require('../validations/auth');
-
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-
+const authService = require("../services/auth.service");
+const emailService = require("../services/email.service");
+const respond = require("../utils/respond");
+const userController = require("./userController");
+const { User } = require("../models");
 
 exports.signin = async (req, res) => {
-  const { error } = loginSchema.validate(req.body);
-
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
-  }
-
   const user = await User.findOne({
     where: {
       email: req.body.email,
     }
-  })
+  });
+  
   if (!user) {
-    return res.status(404).send({ message: "User Not found." });
+    return this.signup(req, res);
   }
 
-  const passwordIsValid = bcrypt.compareSync(
-    req.body.password,
-    user.password
-  );
+  const passwordIsValid = await authService.verifyPassword(req.body.password, user.password);
 
   if (!passwordIsValid) {
     return res.status(401).send({
@@ -37,70 +24,97 @@ exports.signin = async (req, res) => {
     });
   }
 
-  const token = jwt.sign({ id: user.id }, config.secret, {
-    expiresIn: config.jwtExpiration
-  });
-
-  let refreshToken = await RefreshToken.createToken(user);
+  const { accessToken, refreshToken } = authService.createToken(user);
 
   res.status(200).send({
     id: user.id,
     username: user.username,
     email: user.email,
-    accessToken: token,
+    accessToken: accessToken,
     refreshToken: refreshToken,
   });
 };
 
 exports.refreshToken = async (req, res) => {
-  const { error } = refreshTokenSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
-  }
-
   const { refreshToken: requestToken } = req.body;
 
   if (requestToken == null) {
-    return res.status(403).json({ message: "Refresh Token is required!" });
+    return respond(res, 403, { message: "Refresh Token is required!" });
   }
 
-  try {
-    let refreshToken = await RefreshToken.findOne({ where: { token: requestToken } });
+  let refreshToken = await RefreshToken.findOne({ where: { token: requestToken } });
 
-    if (!refreshToken) {
-      res.status(403).json({ message: "Refresh token is not in database!" });
-      return;
-    }
-
-    if (RefreshToken.verifyExpiration(refreshToken)) {
-      RefreshToken.destroy({ where: { id: refreshToken.id } });
-      
-      res.status(403).json({
-        message: "Refresh token was expired. Please make a new signin request",
-      });
-      return;
-    }
-    const user_id = refreshToken.user_id;
-
-    let newAccessToken = jwt.sign({ id: user_id }, config.secret, {
-      expiresIn: config.jwtExpiration,
-    });
-
-    return res.status(200).json({
-      accessToken: newAccessToken,
-      refreshToken: refreshToken.token,
-    });
-  } catch (err) {
-    return res.status(500).send({ message: err });
+  if (!refreshToken) {
+    respond(res, 403, { message: "Refresh token is not in database!" });
+    return;
   }
+
+  if (RefreshToken.verifyExpiration(refreshToken)) {
+    RefreshToken.destroy({ where: { id: refreshToken.id } });
+    respond(res, 403, { message: "Refresh token was expired. Please make a new signin request" });
+    return;
+  }
+  
+  const user_id = refreshToken.user_id;
+  const newAccessToken = jwt.sign({ id: user_id }, config.secret, { expiresIn: config.jwtExpiration });
+
+  return respond(res, 200, { accessToken: newAccessToken, refreshToken: refreshToken.token });
 };
 
 exports.signout = async (req, res) => {
   const user_id = req.userId;
   try {
     await RefreshToken.destroy({ where: { user_id } });
-    res.status(200).send({ message: "User was logged out!" });
+    respond(res, 200, { message: "User was logged out!" });
   } catch(err) {
-    res.status(500).send({ message: err.message });
+    respond(res, 500, { message: err.message });
   }
-}
+};
+
+exports.signup = async (req, res) => {
+  const { email, password } = req.body;
+  const userName = email.split('@')[0];
+
+  const { verificationToken, hashedVerificationToken } = await emailService.createVerificationToken();
+
+  const hashedPassword = await authService.hashPassword(password);
+  const newBody = {
+    ...req.body,
+    username: userName,
+    password: hashedPassword,
+    userType: 'User',
+    isVerified: false,
+    verificationToken: hashedVerificationToken
+  };
+
+  const user = await userController.create({ ...req, body: newBody });
+
+  emailService.sendVerificationEmail(email, verificationToken, user.id).then(() => {
+    respond(res, 201, { message: `A verification email has been sent to ${email}.` });
+  }).catch(err => {
+    return respond(res, 500, { message: err.message });
+  });
+};
+
+exports.confirmationPost = async (req, res) => {
+  const decodedToken = decodeURIComponent(req.params.token);
+  const user = await userController.findOne({ id: req.params.userId }, res);
+  
+  if (!user) {
+    respond(res, 400, { message: "We were unable to find a user for this verification. Please SignUp!" });
+  }
+  
+  const isValid = authService.verifyPassword(decodedToken, user.verificationToken);
+  
+  if (!isValid) {
+    return respond(res, 400, {message: "Invalid token"});
+  } else if (user.isVerified) {
+    return respond(res, 400, {message: "User already verified"});
+  }
+
+  user.isVerified = true;
+  user.verificationToken = null;
+  await user.save();
+
+  return respond(res, 200, {message: "The account has been verified."});
+};
