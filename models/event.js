@@ -26,14 +26,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: DataTypes.NOW
       },
-      clubId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Clubs',
-          key: 'id'
-        }
-      },
       status: {
         type: DataTypes.ENUM('Active', 'Cancelled'),
         allowNull: false
