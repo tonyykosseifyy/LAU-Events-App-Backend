@@ -11,17 +11,15 @@ exports.signin = async (req, res) => {
     }
   });
   
-
   if (!user) {
     return this.signup(req, res);
   }
 
   if (!user.isVerified) {
-    // delete the user and then call signup
     await user.destroy();
     return this.signup(req, res);
   }
-
+  
   const passwordIsValid = await authService.verifyPassword(req.body.password, user.password);
 
   if (!passwordIsValid) {
