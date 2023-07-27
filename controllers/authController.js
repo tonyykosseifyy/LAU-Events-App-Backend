@@ -139,8 +139,7 @@ exports.confirmationAdmin = async (req, res) => {
       // will never fire, cause checked in authJwt
       return res.status(401).send({ message: "Unauthorized! Access Token was expired!" });
     }
-    try {
-      const user = User.findOne({ where: { id: decoded.id } });
+    User.findOne({ where: { id: decoded.id } }).then((user) => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
@@ -148,8 +147,9 @@ exports.confirmationAdmin = async (req, res) => {
       return res.status(200).send({
         isAdmin: user.userType === 'Admin'
       })
-    } catch (err) {
-      return res.status(404).send({ message: "Error Finding User." });
-    }
+    })
+    .catch((err) => {
+      return res.status(500).send({ message: err.message });
+    });
   })
 }

@@ -9,7 +9,7 @@ router.post('/signin', authController.signin);
 router.post('/refreshToken', authController.refreshToken);
 router.post('/signout',isAuthenticated, authController.signout);
 router.get('/confirmation/:userId/:token', authController.confirmationPost);
-router.post('/confrimation/admin', authController.confirmationAdmin);
+router.get('/confrimation/admin',isAuthenticated, authController.confirmationAdmin);
 
 
 module.exports = router;
