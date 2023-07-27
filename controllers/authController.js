@@ -28,12 +28,12 @@ exports.signin = async (req, res) => {
       message: "Invalid Password!"
     });
   }
-
-  const { accessToken, refreshToken } = authService.createToken(user);
+  const { accessToken, refreshToken } = await authService.createToken(user);
+  console.log("access: ", accessToken)
+  console.log("refresh: ", refreshToken)
 
   res.status(200).send({
     id: user.id,
-    username: user.username,
     email: user.email,
     accessToken: accessToken,
     refreshToken: refreshToken,
