@@ -28,12 +28,10 @@ exports.signin = async (req, res) => {
       message: "Invalid Password!"
     });
   }
-
-  const { accessToken, refreshToken } = authService.createToken(user);
+  const { accessToken, refreshToken } = await authService.createToken(user);
 
   res.status(200).send({
     id: user.id,
-    username: user.username,
     email: user.email,
     accessToken: accessToken,
     refreshToken: refreshToken,
@@ -78,14 +76,12 @@ exports.signout = async (req, res) => {
 
 exports.signup = async (req, res) => {
   const { email, password } = req.body;
-  const userName = email.split('@')[0];
 
   const { verificationToken, hashedVerificationToken } = await emailService.createVerificationToken();
 
   const hashedPassword = await authService.hashPassword(password);
   const newBody = {
     ...req.body,
-    username: userName,
     password: hashedPassword,
     userType: 'User',
     isVerified: false,
