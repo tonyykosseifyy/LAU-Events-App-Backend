@@ -1,5 +1,5 @@
 const Joi = require("joi");
-
+// not ready for work
 const addEventSchema = Joi.object({
   eventName: Joi.string().min(1).required(),
   eventDescription: Joi.string().min(1).required(),

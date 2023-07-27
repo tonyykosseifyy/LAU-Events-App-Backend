@@ -31,12 +31,10 @@ exports.signin = async (req, res) => {
     });
   }
 
+  const { accessToken, refreshToken } = authService.createToken(user, user.userType);
 
-  const { accessToken, refreshToken } = await authService.createToken(user, user.userType);
-  
   res.status(200).send({
     id: user.id,
-    username: user.username,
     email: user.email,
     accessToken: accessToken,
     refreshToken: refreshToken,
@@ -91,7 +89,6 @@ exports.signout = async (req, res) => {
 
 exports.signup = async (req, res) => {
   const { email, password } = req.body;
-  const userName = email.split('@')[0];
 
   const { verificationToken, hashedVerificationToken } = await emailService.createVerificationToken();
 
@@ -99,7 +96,6 @@ exports.signup = async (req, res) => {
   // remove req.body and username
   const newBody = {
     ...req.body,
-    username: userName,
     password: hashedPassword,
     userType: 'User',
     isVerified: false,

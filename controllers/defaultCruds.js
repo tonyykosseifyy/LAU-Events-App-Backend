@@ -51,6 +51,7 @@ const create = (Model, schema) => {
             }
 
             const output = await Model.create(req.body)
+            res && respond(res, 201, output)
             return output
         } catch (err) {
             console.log(err)

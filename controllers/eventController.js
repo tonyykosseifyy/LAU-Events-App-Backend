@@ -4,7 +4,7 @@ const addEventSchema = require('../validations/addEventSchema.js')
 
 const getAll = defaultCruds.getAll(Event)
 const getOne = defaultCruds.getOne(Event)
-const create = defaultCruds.create(Event, addEventSchema)
+const create = defaultCruds.create(Event)
 const update = defaultCruds.update(Event)
 const deleteOne = defaultCruds.deleteOne(Event)
 
