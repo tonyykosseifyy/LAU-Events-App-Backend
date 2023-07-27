@@ -18,6 +18,14 @@ module.exports = (sequelize, DataTypes) => {
       },
     });
   
+    ClubEvent.associate = function(models) {
+      ClubEvent.belongsTo(models.Club, {
+        foreignKey: 'clubId',
+      });
+      ClubEvent.belongsTo(models.Event, {
+        foreignKey: 'eventId',
+      });
+    };
+
     return ClubEvent;
-  };
-  
+};

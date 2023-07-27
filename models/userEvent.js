@@ -1,36 +1,40 @@
 module.exports = (sequelize, DataTypes) => {
-    const UserEvent = sequelize.define('UserEvent', {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-      },
-      userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Users',
-          key: 'id'
-        }
-      },
-      eventId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Events',
-          key: 'id'
-        }
-      },
-      status: {
-        type: DataTypes.ENUM('Ignored', 'Accepted', 'Declined'),
-        allowNull: false
-      },
-      responseTime: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW
+  const UserEvent = sequelize.define('UserEvent', {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'id'
       }
+    },
+    eventId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Events',
+        key: 'id'
+      }
+    },
+    status: {
+      type: DataTypes.ENUM('Ignored', 'Accepted', 'Declined'),
+      allowNull: false
+    },
+    responseTime: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+    }
+  });
+
+  UserEvent.associate = function(models) {
+    UserEvent.belongsTo(models.User, {
+      foreignKey: 'userId',
     });
-    return UserEvent;
+    UserEvent.belongsTo(models.Event, {
+      foreignKey: 'eventId',
+    });
   };
-  
+
+  return UserEvent;
+};
