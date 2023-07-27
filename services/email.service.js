@@ -16,13 +16,14 @@ async function sendVerificationEmail(email, verificationToken, userId) {
     port: 587,
     secure: false,
     auth: {
-      user: env.EMAIL,
-      pass: env.EMAIL_PASS
+      user: 'tonykosseify123@gmail.com',
+      pass: 'ltblnbphxmmagpfo'
     },
     tls: {
       rejectUnauthorized: false
     }
   });
+
 
   const encodedVerificationToken = encodeURIComponent(verificationToken);
 
@@ -32,6 +33,7 @@ async function sendVerificationEmail(email, verificationToken, userId) {
     subject: 'Account Verification Token',
     text: `Hello, please verify your account by clicking the link: ${env.CLIENT_URL}/auth/confirmation/${userId}/${encodedVerificationToken}`
   };
+
 
   return transporter.sendMail(mailOptions);
 }

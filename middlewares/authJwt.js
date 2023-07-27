@@ -13,7 +13,7 @@ const catchError = (err, res) => {
   return res.status(401).send({ message: "Unauthorized!" });
 }
 
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = async (req, res, next) => {
   let bearer_token = req.headers['authorization'] ;
 
   if (!bearer_token) {
@@ -25,16 +25,22 @@ const isAuthenticated = (req, res, next) => {
     if (err) {
       return catchError(err, res);
     }
-    req.userId = decoded.id;
-    next();
+    try {
+      const user = User.findOne({ where: { id: decoded.id } });
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+      req.userId = user.id;
+      req.role = user.userType;
+      next();
+    } catch (err) {
+      return res.status(404).send({ message: "Error Finding User." });
+    }
   });
 };
 
 const isAdmin = async (req, res, next) => {
-  const userId = req.userId ;
-
-  const user = await User.findByPk(userId);
-  const role = user.userType ;
+  const role = req.role ;
 
   if (role === 'Admin') {
     return next();

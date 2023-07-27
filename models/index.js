@@ -7,7 +7,10 @@ const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js');
+const User = require('./user');
+const { refreshToken: RefreshToken} = require('./refreshToken');
 const db = {};
+
 
 const sequelize = config.development.mySql.client;
 
@@ -35,5 +38,7 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+
 
 module.exports = db;

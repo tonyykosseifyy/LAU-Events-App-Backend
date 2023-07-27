@@ -3,6 +3,8 @@ const emailService = require("../services/email.service");
 const respond = require("../utils/respond");
 const userController = require("./userController");
 const { User } = require("../models");
+const { refreshToken: RefreshToken }  = require("../models");
+
 
 exports.signin = async (req, res) => {
   const user = await User.findOne({
@@ -29,8 +31,9 @@ exports.signin = async (req, res) => {
     });
   }
 
-  const { accessToken, refreshToken } = authService.createToken(user);
 
+  const { accessToken, refreshToken } = await authService.createToken(user, user.userType);
+  
   res.status(200).send({
     id: user.id,
     username: user.username,
@@ -46,8 +49,15 @@ exports.refreshToken = async (req, res) => {
   if (requestToken == null) {
     return respond(res, 403, { message: "Refresh Token is required!" });
   }
-
-  let refreshToken = await RefreshToken.findOne({ where: { token: requestToken } });
+  let refreshToken = await RefreshToken.findOne({ 
+    where: { token: requestToken }, 
+    // include: {
+    //   model: User,
+    //   attributes: ['userType']
+    // }
+  });
+  
+  return respond(res, 200, {refreshToken});
 
   if (!refreshToken) {
     respond(res, 403, { message: "Refresh token is not in database!" });
@@ -61,7 +71,10 @@ exports.refreshToken = async (req, res) => {
   }
   
   const user_id = refreshToken.user_id;
-  const newAccessToken = jwt.sign({ id: user_id }, config.secret, { expiresIn: config.jwtExpiration });
+  // check if i got user type right here
+  // const user_role = refreshToken.User.userType;
+  const user_role = 'User';
+  const newAccessToken = jwt.sign({ id: user_id, role: user_role }, config.secret, { expiresIn: config.jwtExpiration });
 
   return respond(res, 200, { accessToken: newAccessToken, refreshToken: refreshToken.token });
 };
@@ -83,6 +96,7 @@ exports.signup = async (req, res) => {
   const { verificationToken, hashedVerificationToken } = await emailService.createVerificationToken();
 
   const hashedPassword = await authService.hashPassword(password);
+  // remove req.body and username
   const newBody = {
     ...req.body,
     username: userName,
@@ -93,7 +107,7 @@ exports.signup = async (req, res) => {
   };
 
   const user = await userController.create({ ...req, body: newBody });
-
+  
   emailService.sendVerificationEmail(email, verificationToken, user.id).then(() => {
     respond(res, 201, { message: `A verification email has been sent to ${email}.` });
   }).catch(err => {
@@ -123,3 +137,26 @@ exports.confirmationPost = async (req, res) => {
 
   return respond(res, 200, {message: "The account has been verified."});
 };
+
+exports.confirmationAdmin = async (req, res) => {
+  const accessToken = req.headers['authorization'].split(' ')[1];
+
+  jwt.verify(accessToken, config.secret, (err, decoded) => {
+    if (err) {
+      // will never fire, cause checked in authJwt
+      return res.status(401).send({ message: "Unauthorized! Access Token was expired!" });
+    }
+    try {
+      const user = User.findOne({ where: { id: decoded.id } });
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+      
+      return res.status(200).send({
+        isAdmin: user.userType === 'Admin'
+      })
+    } catch (err) {
+      return res.status(404).send({ message: "Error Finding User." });
+    }
+  })
+}
