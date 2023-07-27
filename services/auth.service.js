@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const config = require("../config/auth.config");
-const { refreshToken: RefreshToken } = require("../models");
+const { RefreshToken } = require("../models");
 
 async function createToken(user, role) {
   const token = jwt.sign({ id: user.id, role }, config.secret, {

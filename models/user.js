@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
       through: models.UserEvent,
       foreignKey: 'userId',
     });
+    User.associate = function(models) {
+      User.hasOne(models.RefreshToken);
+    };
+    
   };
 
   return User;

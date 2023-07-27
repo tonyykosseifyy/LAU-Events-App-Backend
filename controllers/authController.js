@@ -3,8 +3,9 @@ const emailService = require("../services/email.service");
 const respond = require("../utils/respond");
 const userController = require("./userController");
 const { User } = require("../models");
-const { refreshToken: RefreshToken }  = require("../models");
-
+const { RefreshToken }  = require("../models");
+const jwt = require("jsonwebtoken");
+const config = require("../config/auth.config");
 
 exports.signin = async (req, res) => {
   const user = await User.findOne({
@@ -31,7 +32,7 @@ exports.signin = async (req, res) => {
     });
   }
 
-  const { accessToken, refreshToken } = authService.createToken(user, user.userType);
+  const { accessToken, refreshToken } = await authService.createToken(user, user.userType);
 
   res.status(200).send({
     id: user.id,
@@ -49,18 +50,15 @@ exports.refreshToken = async (req, res) => {
   }
   let refreshToken = await RefreshToken.findOne({ 
     where: { token: requestToken }, 
-    // include: {
-    //   model: User,
-    //   attributes: ['userType']
-    // }
+    // include: User
   });
   
-  return respond(res, 200, {refreshToken});
-
   if (!refreshToken) {
     respond(res, 403, { message: "Refresh token is not in database!" });
     return;
   }
+
+  const user = await refreshToken.getUser();
 
   if (RefreshToken.verifyExpiration(refreshToken)) {
     RefreshToken.destroy({ where: { id: refreshToken.id } });
@@ -68,10 +66,9 @@ exports.refreshToken = async (req, res) => {
     return;
   }
   
-  const user_id = refreshToken.user_id;
-  // check if i got user type right here
-  // const user_role = refreshToken.User.userType;
-  const user_role = 'User';
+  const user_id = user.id;
+  const user_role = user.userType;
+
   const newAccessToken = jwt.sign({ id: user_id, role: user_role }, config.secret, { expiresIn: config.jwtExpiration });
 
   return respond(res, 200, { accessToken: newAccessToken, refreshToken: refreshToken.token });

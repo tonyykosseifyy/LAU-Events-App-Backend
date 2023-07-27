@@ -2,7 +2,7 @@ const config = require("../config/auth.config");
 const { v4: uuidv4 } = require("uuid");
 
 module.exports = (sequelize, Sequelize) => {
-  const RefreshToken = sequelize.define("refreshToken", {
+  const RefreshToken = sequelize.define("RefreshToken", {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
@@ -14,16 +14,11 @@ module.exports = (sequelize, Sequelize) => {
     expiryDate: {
       type: Sequelize.DATE,
     },
-    user_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Users',
-        key: 'id'
-      }
-    },
-  });
 
+  });
+  RefreshToken.associate = function(models) {
+    RefreshToken.belongsTo(models.User);
+  };
 
   RefreshToken.createToken = async function (user) {
     let expiredAt = new Date();
@@ -34,7 +29,7 @@ module.exports = (sequelize, Sequelize) => {
 
     let refreshToken = await this.create({
       token: _token,
-      user_id: user.id,
+      UserId: user.id,
       expiryDate: expiredAt.getTime(),
     });
 
