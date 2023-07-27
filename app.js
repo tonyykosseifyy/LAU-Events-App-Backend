@@ -14,6 +14,7 @@ const userRouter = require('./routes/users');
 const userClubRouter = require('./routes/userClub');
 const clubEventRouter = require('./routes/clubEvent');
 const userEventsRouter = require('./routes/userEvent');
+const dashboardRouter = require('./routes/dashboard');
 
 const authRouter = require('./routes/auth');
 const tokenRouter = require('./routes/refreshToken');
@@ -46,6 +47,7 @@ app.use('/', indexRouter);
 app.use('/admins',isAdmin, adminRouter);
 app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
+app.use('/dashboard', dashboardRouter);
 app.use('/users', userRouter);
 app.use('/userClubs', userClubRouter);
 app.use('/clubEvents', clubEventRouter);
