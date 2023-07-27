@@ -19,9 +19,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Club.prototype.getEvents = async function() {
-    return await this.getEvents();
-  };
-
   return Club;
 };

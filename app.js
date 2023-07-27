@@ -12,7 +12,7 @@ const clubRouter = require('./routes/club');
 const eventRouter = require('./routes/event');
 const userRouter = require('./routes/users');
 const userClubRouter = require('./routes/userClub');
-const userEventRouter = require('./routes/userEvent');
+const clubEventRouter = require('./routes/clubEvent');
 
 const authRouter = require('./routes/auth');
 const tokenRouter = require('./routes/refreshToken');
@@ -47,7 +47,7 @@ app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
 app.use('/users', userRouter);
 app.use('/userClubs', userClubRouter);
-app.use('/userEvents', userEventRouter);
+app.use('/clubEvents', clubEventRouter);
 
 app.use('/auth', authRouter);
 app.use('/refreshToken', tokenRouter);

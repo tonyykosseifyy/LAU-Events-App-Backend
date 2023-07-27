@@ -29,8 +29,6 @@ exports.signin = async (req, res) => {
     });
   }
   const { accessToken, refreshToken } = await authService.createToken(user);
-  console.log("access: ", accessToken)
-  console.log("refresh: ", refreshToken)
 
   res.status(200).send({
     id: user.id,
@@ -78,14 +76,12 @@ exports.signout = async (req, res) => {
 
 exports.signup = async (req, res) => {
   const { email, password } = req.body;
-  const userName = email.split('@')[0];
 
   const { verificationToken, hashedVerificationToken } = await emailService.createVerificationToken();
 
   const hashedPassword = await authService.hashPassword(password);
   const newBody = {
     ...req.body,
-    username: userName,
     password: hashedPassword,
     userType: 'User',
     isVerified: false,
