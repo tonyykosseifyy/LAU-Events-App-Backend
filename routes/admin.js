@@ -2,10 +2,21 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController.js');
 
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Admin
+ *   description: Operations on admin model
+ */
+
+
 /**
  * @swagger
  * /admins:
  *   get:
+ *     tags: [Admin]
  *     description: Get all admins
  *     responses:
  *       200:
@@ -21,6 +32,7 @@ router.get('/', adminController.getAll);
  * @swagger
  * /admins/{id}:
  *   get:
+ *     tags: [Admin]
  *     description: Get an admin by ID
  *     parameters:
  *       - name: id
@@ -42,6 +54,7 @@ router.get('/:id', adminController.getOne);
  * @swagger
  * /admins:
  *   post:
+ *     tags: [Admin]
  *     description: Create a new admin
  *     parameters:
  *       - name: admin
@@ -61,6 +74,7 @@ router.post('/', adminController.create);
  * @swagger
  * /admins/{id}:
  *   put:
+ *     tags: [Admin]
  *     description: Update an admin by ID
  *     parameters:
  *       - name: id
@@ -85,6 +99,7 @@ router.put('/:id', adminController.update);
  * @swagger
  * /admins/{id}:
  *   delete:
+ *     tags: [Admin]
  *     description: Delete an admin by ID
  *     parameters:
  *       - name: id
