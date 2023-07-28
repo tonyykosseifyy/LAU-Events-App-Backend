@@ -23,7 +23,6 @@ fs
     );
   })
   .forEach(file => {
-    
     const model = require('./' + file)(sequelize, DataTypes);
     db[model.name] = model;
   });
