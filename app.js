@@ -11,7 +11,6 @@ const adminRouter = require('./routes/admin');
 const clubRouter = require('./routes/club');
 const eventRouter = require('./routes/event');
 const userRouter = require('./routes/users');
-const userClubRouter = require('./routes/userClub');
 const clubEventRouter = require('./routes/clubEvent');
 const userEventsRouter = require('./routes/userEvent');
 const dashboardRouter = require('./routes/dashboard');
@@ -50,7 +49,6 @@ app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/users', userRouter);
-app.use('/userClubs', userClubRouter);
 app.use('/clubEvents', clubEventRouter);
 app.use('/userEvents', userEventsRouter)
 

@@ -210,32 +210,6 @@ const options = {
             },
           },
         },
-        UserClub: {
-          type: 'object',
-          properties: {
-            id: {
-              type: 'integer',
-              description: 'UserClub ID.',
-              example: 1,
-            },
-            userId: {
-              type: 'integer',
-              description: 'User ID.',
-              example: 1,
-            },
-            clubId: {
-              type: 'integer',
-              description: 'Club ID.',
-              example: 1,
-            },
-            joinDate: {
-              type: 'string',
-              format: 'date-time',
-              description: 'Date when the user joined the club.',
-              example: '2023-07-20T00:00:00Z',
-            },
-          }
-        },
         UserEvent: {
           type: 'object',
           properties: {
