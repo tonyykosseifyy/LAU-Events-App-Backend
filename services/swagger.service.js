@@ -5,7 +5,7 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Your API title',
+      title: 'LAU Events App API',
       version: '1.0.0',
     },
     components: {
@@ -17,11 +17,6 @@ const options = {
               type: 'integer',
               description: 'The admin ID.',
               example: 1,
-            },
-            name: {
-              type: 'string',
-              description: 'The admin name.',
-              example: 'John Doe',
             },
           },
         },

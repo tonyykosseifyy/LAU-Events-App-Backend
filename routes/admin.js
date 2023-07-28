@@ -6,14 +6,14 @@ const adminController = require('../controllers/adminController.js');
  * @swagger
  * /admins:
  *   get:
- *     tags:
- *       - Admins
  *     description: Get all admins
- *     produces:
- *       - application/json
  *     responses:
  *       200:
- *         description: An array of admins
+ *         description: Success
+ *         schema:
+ *           $ref: '#/components/schemas/Admin'
+ *       403:
+ *         description: Forbidden (not an admin)
  */
 router.get('/', adminController.getAll);
 
@@ -21,20 +21,20 @@ router.get('/', adminController.getAll);
  * @swagger
  * /admins/{id}:
  *   get:
- *     tags:
- *       - Admins
- *     description: Get a single admin by id
- *     produces:
- *       - application/json
+ *     description: Get an admin by ID
  *     parameters:
  *       - name: id
- *         description: Admin's id
  *         in: path
  *         required: true
- *         type: integer
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
- *         description: A single admin
+ *         description: Success
+ *         schema:
+ *           $ref: '#/components/schemas/Admin'
+ *       403:
+ *         description: Forbidden (not an admin)
  */
 router.get('/:id', adminController.getOne);
 
@@ -42,21 +42,18 @@ router.get('/:id', adminController.getOne);
  * @swagger
  * /admins:
  *   post:
- *     tags:
- *       - Admins
  *     description: Create a new admin
- *     produces:
- *       - application/json
  *     parameters:
  *       - name: admin
- *         description: Admin object
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/Admin'
+ *           $ref: '#/components/schemas/Admin'
  *     responses:
- *       200:
- *         description: Successfully created
+ *       201:
+ *         description: Created
+ *       403:
+ *         description: Forbidden (not an admin)
  */
 router.post('/', adminController.create);
 
@@ -64,26 +61,23 @@ router.post('/', adminController.create);
  * @swagger
  * /admins/{id}:
  *   put:
- *     tags:
- *       - Admins
- *     description: Update an existing admin
- *     produces:
- *       - application/json
+ *     description: Update an admin by ID
  *     parameters:
  *       - name: id
- *         description: Admin's id
  *         in: path
  *         required: true
- *         type: integer
+ *         schema:
+ *           type: integer
  *       - name: admin
- *         description: Admin object
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/Admin'
+ *           $ref: '#/components/schemas/Admin'
  *     responses:
  *       200:
- *         description: Successfully updated
+ *         description: Success
+ *       403:
+ *         description: Forbidden (not an admin)
  */
 router.put('/:id', adminController.update);
 
@@ -91,20 +85,18 @@ router.put('/:id', adminController.update);
  * @swagger
  * /admins/{id}:
  *   delete:
- *     tags:
- *       - Admins
- *     description: Delete an admin by its id
- *     produces:
- *       - application/json
+ *     description: Delete an admin by ID
  *     parameters:
  *       - name: id
- *         description: Admin's id
  *         in: path
  *         required: true
- *         type: integer
+ *         schema:
+ *           type: integer
  *     responses:
- *       200:
- *         description: Successfully deleted
+ *       204:
+ *         description: Deleted successfully
+ *       403:
+ *         description: Forbidden (not an admin)
  */
 router.delete('/:id', adminController.deleteOne);
 
