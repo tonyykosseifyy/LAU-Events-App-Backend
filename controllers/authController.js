@@ -6,6 +6,7 @@ const { User } = require("../models");
 const { RefreshToken }  = require("../models");
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config");
+const { codeSchema } = require("../validations/auth");
 
 exports.signin = async (req, res) => {
   const user = await User.findOne({
@@ -87,7 +88,7 @@ exports.signout = async (req, res) => {
 exports.signup = async (req, res) => {
   const { email, password } = req.body;
 
-  const { verificationToken, hashedVerificationToken } = await emailService.createVerificationToken();
+  const { verificationCode, hashedVerificationCode } = await emailService.createVerificationToken();
 
   const hashedPassword = await authService.hashPassword(password);
   // remove req.body and username
@@ -96,39 +97,54 @@ exports.signup = async (req, res) => {
     password: hashedPassword,
     userType: 'User',
     isVerified: false,
-    verificationToken: hashedVerificationToken
+    verificationToken: hashedVerificationCode
   };
 
   const user = await userController.create({ ...req, body: newBody });
   
-  emailService.sendVerificationEmail(email, verificationToken, user.id).then(() => {
-    respond(res, 201, { message: `A verification email has been sent to ${email}.` });
+  emailService.sendVerificationEmail(email, verificationCode).then(() => {
+    respond(res, 201, { message: `A verification email has been sent to ${email}.`, userId: user.id });
   }).catch(err => {
     return respond(res, 500, { message: err.message });
   });
 };
 
 exports.confirmationPost = async (req, res) => {
-  const decodedToken = decodeURIComponent(req.params.token);
-  const user = await userController.findOne({ id: req.params.userId }, res);
+  const { error, value } = codeSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  const { userId, code } = value;
+  
+  const user = await User.findByPk(userId);
+  
   
   if (!user) {
     respond(res, 400, { message: "We were unable to find a user for this verification. Please SignUp!" });
+  } else if (user.isVerified) {
+    return respond(res, 400, { message: "User already verified" });
   }
   
-  const isValid = authService.verifyPassword(decodedToken, user.verificationToken);
+  const isValid = authService.verifyPassword(code, user.verificationToken);
   
   if (!isValid) {
     return respond(res, 400, {message: "Invalid token"});
-  } else if (user.isVerified) {
-    return respond(res, 400, {message: "User already verified"});
   }
 
   user.isVerified = true;
   user.verificationToken = null;
   await user.save();
 
-  return respond(res, 200, {message: "The account has been verified."});
+  const { accessToken, refreshToken } = await authService.createToken(user, user.userType);
+
+  return res.status(200).send({
+    id: user.id,
+    email: user.email,
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+  });
+  
 };
 
 exports.confirmationAdmin = async (req, res) => {
