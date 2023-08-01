@@ -1,4 +1,4 @@
-const { Event, Club, User } = require("../models");
+const { Event, Club, User, UserEvent } = require("../models");
 const defaultCruds = require("./defaultCruds.js");
 const respond = require("../utils/respond.js");
 
@@ -30,6 +30,17 @@ const getEventDetails = async (req, res, next) => {
     if (!event) {
       return respond(res, 404, { message: "Event not found" });
     }
+    // count the number of users who have declined the event
+    const countDeclinedUser = await UserEvent.count({
+      where: { 
+        eventId: req.params.id,
+        status: "Declined"
+       },
+    });
+
+
+    // attach it to the response 
+    event.dataValues.declinedUsers = countDeclinedUser;
 
     res && respond(res, 200, event);
   } catch (err) {
