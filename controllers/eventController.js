@@ -38,7 +38,6 @@ const getEventDetails = async (req, res, next) => {
        },
     });
 
-
     // attach it to the response 
     event.dataValues.declinedUsers = countDeclinedUser;
 
@@ -74,8 +73,28 @@ const createEvent = async (req, res, next) => {
   }
 }
 
+const getAllEvents = async (req, res, next) => {
+  try {
+    // return all events, with their clubs populated 
+    const events = await Event.findAll({
+      include: [
+        {
+          model: Club,
+          attributes: ["clubName"],
+          through: { attributes: [] }, // Exclude the join table attributes
+        },
+      ],
+    });
+
+    res && respond(res, 200, events);
+
+  } catch(err) {
+    return respond(res, 500, err);
+  }
+}
+
 module.exports = {
-  getAll,
+  getAll: getAllEvents,
   getOne,
   create: createEvent,
   update,
