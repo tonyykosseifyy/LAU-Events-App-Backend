@@ -6,12 +6,20 @@ const { User } = require("../models");
 const { RefreshToken }  = require("../models");
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config");
-const { codeSchema } = require("../validations/auth");
+const { codeSchema, loginSchema, refreshTokenSchema } = require("../validations/auth");
 
 exports.signin = async (req, res) => {
+  const { error, value } = loginSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
+  const { email, password } = value;
+
   const user = await User.findOne({
     where: {
-      email: req.body.email,
+      email: email,
     }
   });
   
@@ -24,7 +32,7 @@ exports.signin = async (req, res) => {
     return this.signup(req, res);
   }
   
-  const passwordIsValid = await authService.verifyPassword(req.body.password, user.password);
+  const passwordIsValid = await authService.verifyPassword(password, user.password);
 
   if (!passwordIsValid) {
     return res.status(401).send({
@@ -44,14 +52,16 @@ exports.signin = async (req, res) => {
 };
 
 exports.refreshToken = async (req, res) => {
-  const { refreshToken: requestToken } = req.body;
-
-  if (requestToken == null) {
-    return respond(res, 403, { message: "Refresh Token is required!" });
+  const { error, value } = refreshTokenSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
   }
+  
+  const { refreshToken: requestToken } = value;
+
+
   let refreshToken = await RefreshToken.findOne({ 
     where: { token: requestToken }, 
-    // include: User
   });
   
   if (!refreshToken) {
