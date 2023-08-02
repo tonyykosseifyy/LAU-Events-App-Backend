@@ -131,7 +131,7 @@ exports.confirmationPost = async (req, res) => {
   
   
   if (!user) {
-    respond(res, 400, { message: "We were unable to find a user for this verification. Please SignUp!" });
+    return respond(res, 400, { message: "We were unable to find a user for this verification. Please SignUp!" });
   } else if (user.isVerified) {
     return respond(res, 400, { message: "User already verified" });
   }
@@ -139,7 +139,7 @@ exports.confirmationPost = async (req, res) => {
   const isValid = authService.verifyPassword(code, user.verificationToken);
   
   if (!isValid) {
-    return respond(res, 400, {message: "Invalid token"});
+    return respond(res, 400, { message: "Invalid token" });
   }
 
   user.isVerified = true;
@@ -154,7 +154,6 @@ exports.confirmationPost = async (req, res) => {
     accessToken: accessToken,
     refreshToken: refreshToken,
   });
-  
 };
 
 exports.confirmationAdmin = async (req, res) => {
