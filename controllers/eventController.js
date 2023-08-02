@@ -1,4 +1,4 @@
-const { Event, Club, User } = require("../models");
+const { Event, ClubEvent, UserEvent, Club, User } = require("../models");
 const defaultCruds = require("./defaultCruds.js");
 const respond = require("../utils/respond.js");
 
@@ -14,14 +14,14 @@ const getEventDetails = async (req, res, next) => {
         {
           model: Club,
           attributes: ["clubName"],
-          through: { attributes: [] }, // Exclude the join table attributes
+          through: { attributes: [] }, 
         },
         {
           model: User,
           attributes: ["email"],
           through: {
             attributes: [],
-            where: { status: "Accepted" }, // Filter users whose status is "Accepted"
+            where: { status: "Accepted" }, 
           },
         },
       ],
@@ -63,6 +63,19 @@ const createEvent = async (req, res, next) => {
   }
 }
 
+const deleteAll = async (req, res, next) => {
+  try {
+    await ClubEvent.destroy({ where: {} });
+    await UserEvent.destroy({ where: {} });
+    await Event.destroy({ where: {} });
+
+    return respond(res, 200, { message: "All events and associated records deleted successfully" });
+  } catch (err) {
+    return respond(res, 500, err);
+  }
+}
+
+
 module.exports = {
   getAll,
   getOne,
@@ -70,4 +83,5 @@ module.exports = {
   update,
   deleteOne,
   getEventDetails,
+  deleteAll
 };
