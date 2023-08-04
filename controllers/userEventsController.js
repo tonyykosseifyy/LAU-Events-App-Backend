@@ -43,6 +43,7 @@ const create = async (req, res, next) => {
         return respond(res, 500, err);
     }
 }
+
 module.exports = {
     getAll,
     getOne,

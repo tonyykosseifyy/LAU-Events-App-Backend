@@ -1,4 +1,4 @@
-const { Event, ClubEvent, UserEvent, Club, User } = require("../models");
+const { Event, ClubEvent, UserEvent, Club, User, sequelize } = require("../models");
 const defaultCruds = require("./defaultCruds.js");
 const respond = require("../utils/respond.js");
 
@@ -107,6 +107,27 @@ const getAllEvents = async (req, res, next) => {
   }
 }
 
+const getAllDeclinedEvents = async (req, res, next) => {
+  try {
+      const userId = req.userId;
+
+    const declinedEvents = await UserEvent.findAll({
+      attributes: ['eventId', 'responseTime'],
+      where: {
+        userId,
+        status: "Declined"
+      },
+      include: [
+        {
+          model: Event,
+        },
+      ],
+    });
+      return respond(res, 200, declinedEvents);
+  } catch (err) {
+      return respond(res, 500, err);
+  }
+}
 
 module.exports = {
   getAll: getAllEvents,
@@ -115,5 +136,6 @@ module.exports = {
   update,
   deleteOne,
   getEventDetails,
-  deleteAll
+  deleteAll,
+  getAllDeclinedEvents
 };
