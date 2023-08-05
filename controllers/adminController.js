@@ -7,8 +7,12 @@ const getAll = defaultCruds.getAll(Admin)
 const getOne = defaultCruds.getOne(Admin)
 const create = async (req, res, next) => {
     try {
-        const output = await Admin.create(req.body)
         const user = await User.findByPk(req.body.id)
+
+        if (!user) {
+          respond(res, 404, {message: 'Item not found'})
+        }
+        const output = await Admin.create(req.body)
         await user.update({userType: "Admin"})
         return respond(res, 201, output)
     } catch (err) {
