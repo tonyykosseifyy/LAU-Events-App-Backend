@@ -263,3 +263,4 @@ router.post('/verify', authController.confirmationPost);
 
 module.exports = router;
 
+
