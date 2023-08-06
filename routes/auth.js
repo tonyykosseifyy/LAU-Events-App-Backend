@@ -3,8 +3,6 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const { isAuthenticated } = require('../middlewares/authJwt');
 
-
-
 /**
  * @swagger
  * tags:
@@ -12,42 +10,56 @@ const { isAuthenticated } = require('../middlewares/authJwt');
  *   description: Authentication operations
  */
 
-
 /**
  * @swagger
  * /signin:
  *  post:
  *    tags: [Auth]
  *    summary: User sign-in
- *    description: Existing user sign-in
- *    parameters:
- *      - in: body
- *        name: signin input
- *        schema: 
- *          type: object
- *          properties:            
- *            email:
- *              type: string
- *              example: firstName.lastName@lau.edu
- *            password:
- *              type: string
- *              example: 1 uppercase - 1 lowercase - 8 characters minimum - 1 special character
+ *    description: Existing user sign-in or new user sign-up
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            required:
+ *              - email
+ *              - password
+ *            properties:
+ *              email:
+ *                type: string
+ *                example: user@example.com
+ *              password:
+ *                type: string
+ *                example: Password123!
  *    responses:
- *      200:
+ *      '200':
  *        description: A successful response
  *        content:
  *          application/json:
  *            schema:
  *              type: object
  *              properties:
- *                message:
- *                  type: string
- *                  example: A verification email has been sent to firstName.lastName@lau.edu
- *                userId:
+ *                id:
  *                  type: integer
- *                  example: 1
- *      401:
- *        description: Invalid password
+ *                email:
+ *                  type: string
+ *                accessToken:
+ *                  type: string
+ *                refreshToken:
+ *                  type: string
+ *      '400':
+ *        description: Bad Request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                error:
+ *                  type: string
+ *      '401':
+ *        description: Unauthorized
  *        content:
  *          application/json:
  *            schema:
@@ -58,8 +70,7 @@ const { isAuthenticated } = require('../middlewares/authJwt');
  *                  example: null
  *                message:
  *                  type: string
- *                  example: Invalid Password                
- *                
+ *                  example: Invalid Password!
  */
 
 router.post('/signin', authController.signin);
@@ -92,12 +103,19 @@ router.post('/signin', authController.signin);
  *              properties:
  *                accessToken:
  *                  type: string
- *                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IlVzZXIiLCJpYXQiOjE2OTEzMjgwNzAsImV4cCI6MTY5MTMyODk3MH0.JZoEL176nLKssoe5vfMXhk6BQofTZqKFl5JjwDifCyk
  *                refreshToken:
  *                  type: string
- *                  example: c110f2dc-2a3a-4382-a75c-a703c4ddd30b
+ *      '400':
+ *        description: Bad Request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                error:
+ *                  type: string
  *      '403':
- *        description: forbidden
+ *        description: Forbidden
  *        content:
  *          application/json:
  *            schema:
@@ -105,9 +123,7 @@ router.post('/signin', authController.signin);
  *              properties:
  *                message:
  *                  type: string
- *                  example: Refresh token is not in database!
  */
-
 
 router.post('/refreshToken', authController.refreshToken);
 
@@ -146,11 +162,9 @@ router.post('/refreshToken', authController.refreshToken);
  *              properties:
  *                message:
  *                  type: string
- *                  example: Error message
  */
 
 router.post('/signout',isAuthenticated, authController.signout);
-
 
 /**
  * @swagger
@@ -177,7 +191,6 @@ router.post('/signout',isAuthenticated, authController.signout);
  *              properties:
  *                isAdmin:
  *                  type: boolean
- *                  example: true
  *      '401':
  *        description: Unauthorized
  *        content:
@@ -207,14 +220,58 @@ router.post('/signout',isAuthenticated, authController.signout);
  *              properties:
  *                message:
  *                  type: string
- *                  example: Error message
  */
 
 router.get('/confirmation/admin',isAuthenticated, authController.confirmationAdmin);
 
+/**
+ * @swagger
+ * /verify:
+ *  post:
+ *    tags: [Auth]
+ *    summary: Verify User
+ *    description: Verify user's email address
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            required:
+ *              - userId
+ *              - code
+ *            properties:
+ *              userId:
+ *                type: integer
+ *              code:
+ *                type: string
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                id:
+ *                  type: integer
+ *                email:
+ *                  type: string
+ *                accessToken:
+ *                  type: string
+ *                refreshToken:
+ *                  type: string
+ *      '400':
+ *        description: Bad Request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                error:
+ *                  type: string
+ */
+
 router.post('/verify', authController.confirmationPost);
 
-
 module.exports = router;
-
-
