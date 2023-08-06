@@ -43,6 +43,9 @@ const { isAuthenticated } = require('../middlewares/authJwt');
  *                message:
  *                  type: string
  *                  example: A verification email has been sent to firstName.lastName@lau.edu
+ *                userId:
+ *                  type: integer
+ *                  example: 1
  *      401:
  *        description: Invalid password
  *        content:
@@ -148,55 +151,6 @@ router.post('/refreshToken', authController.refreshToken);
 
 router.post('/signout',isAuthenticated, authController.signout);
 
-/**
- * @swagger
- * /confirmation/{userId}/{token}:
- *  get:
- *    tags: [Auth]
- *    summary: User confirmation
- *    description: Confirm user's email
- *    parameters:
- *      - in: path
- *        name: userId
- *        required: true
- *        schema:
- *          type: integer
- *      - in: path
- *        name: token
- *        required: true
- *        schema:
- *          type: string
- *      - in: header
- *        name: Authorization
- *        schema:
- *          type: string
- *          example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IlVzZXIiLCJpYXQiOjE2OTEzMjgwNzAsImV4cCI6MTY5MTMyODk3MH0.JZoEL176nLKssoe5vfMXhk6BQofTZqKFl5JjwDifCyk
- *        required: true
- *        description: Bearer token for authentication
- *    responses:
- *      '200':
- *        description: A successful response
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                message:
- *                  type: string
- *                  example: The account has been verified.
- *      '400':
- *        description: Bad request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                message:
- *                  type: string
- *                  example: Invalid token or User already verified
- */
-
-router.get('/confirmation/:userId/:token', authController.confirmationPost);
 
 /**
  * @swagger

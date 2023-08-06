@@ -107,7 +107,7 @@ exports.signup = async (req, res) => {
     password: hashedPassword,
     userType: 'User',
     isVerified: false,
-    verificationToken: verificationToken
+    verificationToken: verificationCode
   };
 
   const user = await userController.create({ ...req, body: newBody });
