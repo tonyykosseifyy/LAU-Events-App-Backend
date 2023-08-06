@@ -11,7 +11,6 @@ const adminRouter = require('./routes/admin');
 const clubRouter = require('./routes/club');
 const eventRouter = require('./routes/event');
 const userRouter = require('./routes/users');
-const userClubRouter = require('./routes/userClub');
 const clubEventRouter = require('./routes/clubEvent');
 const userEventsRouter = require('./routes/userEvent');
 const dashboardRouter = require('./routes/dashboard');
@@ -35,21 +34,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // authenticated middleware for all routes except /auth
 app.use((req, res, next) => {
-  if (!req.path.startsWith('/auth')) {
+  if (!req.path.startsWith('/auth') && !req.path.startsWith('/api-docs')) {
     isAuthenticated(req, res, next);
   } else {
     next();
   }
 });
 
-
+require('./services/swagger.service.js')(app);
 app.use('/', indexRouter);
 app.use('/admins',isAdmin, adminRouter);
 app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/users', userRouter);
-app.use('/userClubs', userClubRouter);
 app.use('/clubEvents', clubEventRouter);
 app.use('/userEvents', userEventsRouter)
 
