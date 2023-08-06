@@ -21,12 +21,12 @@ const isAuthenticated = async (req, res, next) => {
   }
   const token = bearer_token.split(' ')[1];
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, config.secret, async (err, decoded) => {
     if (err) {
       return catchError(err, res);
     }
     try {
-      const user = User.findOne({ where: { id: decoded.id } });
+      const user = await User.findOne({ where: { id: decoded.id } });
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }

@@ -199,7 +199,6 @@ router.post('/', adminController.create);
  *     responses:
  *       200:
  *         description: Success
- *         schema:
  *       403:
  *         description: Forbidden
  *         content:

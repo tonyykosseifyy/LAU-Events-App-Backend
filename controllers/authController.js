@@ -75,9 +75,9 @@ exports.refreshToken = async (req, res) => {
 };
 
 exports.signout = async (req, res) => {
-  const user_id = req.userId;
+  const id = req.userId;
   try {
-    await RefreshToken.destroy({ where: { user_id } });
+    await RefreshToken.destroy({ where: { id } });
     respond(res, 200, { message: "User was logged out!" });
   } catch(err) {
     respond(res, 500, { message: err.message });
@@ -96,7 +96,7 @@ exports.signup = async (req, res) => {
     password: hashedPassword,
     userType: 'User',
     isVerified: false,
-    verificationToken: hashedVerificationToken
+    verificationToken: verificationToken
   };
 
   const user = await userController.create({ ...req, body: newBody });
@@ -115,13 +115,13 @@ exports.confirmationPost = async (req, res) => {
   if (!user) {
     respond(res, 400, { message: "We were unable to find a user for this verification. Please SignUp!" });
   }
-  
-  const isValid = authService.verifyPassword(decodedToken, user.verificationToken);
+  if (!user.verificationToken){
+    return respond(res, 400, {message: "User already verified"});
+  }
+  const isValid = authService.verifyToken(decodedToken, user.verificationToken); 
   
   if (!isValid) {
     return respond(res, 400, {message: "Invalid token"});
-  } else if (user.isVerified) {
-    return respond(res, 400, {message: "User already verified"});
   }
 
   user.isVerified = true;
