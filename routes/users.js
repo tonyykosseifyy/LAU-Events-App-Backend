@@ -123,5 +123,4 @@ router.put('/:id', userController.update);
  */
 router.delete('/:id', userController.deleteOne);
 
-
 module.exports = router;

@@ -5,16 +5,17 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 require("./utils/database");
 
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
-const adminRouter = require("./routes/admin");
-const clubRouter = require("./routes/club");
-const eventRouter = require("./routes/event");
-const userRouter = require("./routes/users");
-const userClubRouter = require("./routes/userClub");
-const clubEventRouter = require("./routes/clubEvent");
-const userEventsRouter = require("./routes/userEvent");
-const dashboardRouter = require("./routes/dashboard");
+
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
+const clubRouter = require('./routes/club');
+const eventRouter = require('./routes/event');
+const userRouter = require('./routes/users');
+const clubEventRouter = require('./routes/clubEvent');
+const userEventsRouter = require('./routes/userEvent');
+const dashboardRouter = require('./routes/dashboard');
+
 
 const authRouter = require("./routes/auth");
 const tokenRouter = require("./routes/refreshToken");
@@ -41,7 +42,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-
 
 require('./services/swagger.service.js')(app);
 app.use('/', indexRouter);

@@ -58,6 +58,7 @@ const { isAuthenticated } = require('../middlewares/authJwt');
  *                  example: Invalid Password                
  *                
  */
+
 router.post('/signin', authController.signin);
 
 /**
@@ -104,6 +105,7 @@ router.post('/signin', authController.signin);
  *                  example: Refresh token is not in database!
  */
 
+
 router.post('/refreshToken', authController.refreshToken);
 
 /**
@@ -143,8 +145,8 @@ router.post('/refreshToken', authController.refreshToken);
  *                  type: string
  *                  example: Error message
  */
-router.post('/signout',isAuthenticated, authController.signout);
 
+router.post('/signout',isAuthenticated, authController.signout);
 
 /**
  * @swagger
@@ -193,9 +195,8 @@ router.post('/signout',isAuthenticated, authController.signout);
  *                  type: string
  *                  example: Invalid token or User already verified
  */
-router.get('/confirmation/:userId/:token', authController.confirmationPost);
-router.post('/verify', authController.confirmationPost);
 
+router.get('/confirmation/:userId/:token', authController.confirmationPost);
 
 /**
  * @swagger
@@ -254,6 +255,12 @@ router.post('/verify', authController.confirmationPost);
  *                  type: string
  *                  example: Error message
  */
+
 router.get('/confirmation/admin',isAuthenticated, authController.confirmationAdmin);
 
+router.post('/verify', authController.confirmationPost);
+
+
 module.exports = router;
+
+
