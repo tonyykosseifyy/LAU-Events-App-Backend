@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
     verificationToken: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    major:{
+      type: DataTypes.STRING,
+      allowNull:true
     }
   });
 

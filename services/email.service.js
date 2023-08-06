@@ -1,16 +1,26 @@
-const crypto = require('crypto');
+const passwordGenerator =  require('generate-password');
+
 const bcrypt = require("bcryptjs");
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config().parsed;
 
-async function createVerificationToken() {
-  const verificationToken = crypto.randomBytes(32).toString('hex');
-  const hashedVerificationToken = await bcrypt.hash(verificationToken, 10);
 
-  return { verificationToken, hashedVerificationToken };
+async function createVerificationToken() {
+  // generate only numbers
+  const verificationCode = passwordGenerator.generate({
+    length: 6,
+    numbers: true,
+    symbols: false,
+    uppercase: false,
+    lowercase: false,
+  });
+  console.log(verificationCode);
+  const hashedVerificationCode = await bcrypt.hash(verificationCode, 10);
+
+  return { verificationCode, hashedVerificationCode };
 }
 
-async function sendVerificationEmail(email, verificationToken, userId) {
+async function sendVerificationEmail(email, verificationCode) {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -24,14 +34,11 @@ async function sendVerificationEmail(email, verificationToken, userId) {
     }
   });
 
-
-  const encodedVerificationToken = encodeURIComponent(verificationToken);
-
   const mailOptions = {
     from: env.EMAIL,
     to: email,
     subject: 'Account Verification Token',
-    text: `Hello, please verify your account by clicking the link: ${env.CLIENT_URL}/auth/confirmation/${userId}/${encodedVerificationToken}`
+    text: `Hello, this is your verification code ${verificationCode}`,
   };
 
 

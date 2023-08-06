@@ -21,21 +21,29 @@ const isAuthenticated = async (req, res, next) => {
   }
   const token = bearer_token.split(' ')[1];
 
-  jwt.verify(token, config.secret, async (err, decoded) => {
+  jwt.verify(token, config.secret,(err, decoded) => {
     if (err) {
       return catchError(err, res);
     }
+    
     try {
-      const user = await User.findOne({ where: { id: decoded.id } });
+      const user = User.findOne({ where: { id: decoded.id } });
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
+
+    User.findOne({ where: { id: decoded.id } })
+    .then((user) => {
+      if ( user ) {
+        req.userId = user.id;
+        req.role = user.userType;
+        return next();
+
       }
-      req.userId = user.id;
-      req.role = user.userType;
-      next();
-    } catch (err) {
-      return res.status(404).send({ message: "Error Finding User." });
-    }
+      return res.status(404).send({ message: "User Not found." });
+    })
+    .catch((err) => {
+      return res.status(500).send({ message: err.message })  ;
+    });    
   });
 };
 

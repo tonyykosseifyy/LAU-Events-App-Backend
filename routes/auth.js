@@ -145,6 +145,7 @@ router.post('/refreshToken', authController.refreshToken);
  */
 router.post('/signout',isAuthenticated, authController.signout);
 
+
 /**
  * @swagger
  * /confirmation/{userId}/{token}:
@@ -193,6 +194,8 @@ router.post('/signout',isAuthenticated, authController.signout);
  *                  example: Invalid token or User already verified
  */
 router.get('/confirmation/:userId/:token', authController.confirmationPost);
+router.post('/verify', authController.confirmationPost);
+
 
 /**
  * @swagger
