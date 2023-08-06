@@ -72,7 +72,6 @@ const update = (Model) => {
             if (!output){
                 return respond(res, 404, {message: "Item not found"})
             }
-
             await output.update(req.body)
             return respond(res, 200, output)
         } catch(err){

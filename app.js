@@ -35,25 +35,26 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // authenticated middleware for all routes except /auth
 app.use((req, res, next) => {
-  if (!req.path.startsWith("/auth")) {
+  if (!req.path.startsWith('/auth') && !req.path.startsWith('/api-docs')) {
     isAuthenticated(req, res, next);
   } else {
     next();
   }
 });
 
-app.use("/", indexRouter);
-app.use("/admins", isAdmin, adminRouter);
-app.use("/clubs", clubRouter);
-app.use("/events", eventRouter);
-app.use("/dashboard", dashboardRouter);
-app.use("/users", userRouter);
-app.use("/userClubs", userClubRouter);
-app.use("/clubEvents", clubEventRouter);
-app.use("/userEvents", userEventsRouter);
 
+require('./services/swagger.service.js')(app);
+app.use('/', indexRouter);
+app.use('/admins', adminRouter);
+app.use('/clubs', clubRouter);
+app.use('/events', eventRouter);
+app.use('/dashboard', dashboardRouter);
+app.use('/users', userRouter);
+app.use('/clubEvents', clubEventRouter);
+app.use('/userEvents', userEventsRouter)
 app.use("/auth", authRouter);
 app.use("/refreshToken", tokenRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -68,7 +69,8 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.render('error', { title: "Error Page" });
+
 });
 
 module.exports = app;
