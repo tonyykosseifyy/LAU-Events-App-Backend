@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController.js');
+const validate = require('../middlewares/validate');
+const { getOneSchema, createSchema, updateSchema } = require('../validations/users.validation');
 
 /**
  * @swagger
@@ -101,7 +103,7 @@ router.get('/', userController.getAll);
  *        description: Server error
  */
 
-router.get('/:id', userController.getOne);
+router.get('/:id', validate([{ schema: getOneSchema, property: 'params' }]), userController.getOne);
 
 /**
  * @swagger
@@ -169,7 +171,7 @@ router.get('/:id', userController.getOne);
  *        description: Server error
  */
 
-router.post('/', userController.create);
+router.post('/', validate([{ schema: createSchema, property: 'body' }]), userController.create);
 
 /**
  * @swagger
@@ -244,7 +246,10 @@ router.post('/', userController.create);
  *        description: Server error
  */
 
-router.put('/:id', userController.update);
+router.put('/:id', validate([
+    { schema: updateSchema.params, property: 'params' },
+    { schema: updateSchema.body, property: 'body' },
+]), userController.update);
 
 /**
  * @swagger
@@ -268,6 +273,6 @@ router.put('/:id', userController.update);
  *        description: Server error
  */
 
-router.delete('/:id', userController.deleteOne);
+router.delete('/:id', validate([{ schema: getOneSchema, property: 'params' }]), userController.deleteOne);
 
 module.exports = router;

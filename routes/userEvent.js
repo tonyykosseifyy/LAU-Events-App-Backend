@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const userEventsController = require('../controllers/userEventsController.js');
+const validate = require('../middlewares/validate');
+const { getOneSchema, createSchema, updateSchema } = require('../validations/userEvent.validation');
 
 /**
  * @swagger
@@ -85,7 +87,7 @@ router.get('/', userEventsController.getAll);
  *        description: Server error
  */
 
-router.get('/:id', userEventsController.getOne);
+router.get('/:id', validate([{ schema: getOneSchema, property: 'params' }]), userEventsController.getOne);
 
 /**
  * @swagger
@@ -136,7 +138,7 @@ router.get('/:id', userEventsController.getOne);
  *        description: Server error
  */
 
-router.post('/', userEventsController.create);
+router.post('/', validate([{ schema: createSchema, property: 'body' }]), userEventsController.create);
 
 /**
  * @swagger
@@ -188,7 +190,10 @@ router.post('/', userEventsController.create);
  *        description: Server error
  */
 
-router.put('/:id', userEventsController.update);
+router.put('/:id', validate([
+    { schema: updateSchema.params, property: 'params' },
+    { schema: updateSchema.body, property: 'body' },
+]), userEventsController.update);
 
 /**
  * @swagger
@@ -212,6 +217,6 @@ router.put('/:id', userEventsController.update);
  *        description: Server error
  */
 
-router.delete('/:id', userEventsController.deleteOne);
+router.delete('/:id', validate([{ schema: getOneSchema, property: 'params' }]), userEventsController.deleteOne);
 
 module.exports = router;
