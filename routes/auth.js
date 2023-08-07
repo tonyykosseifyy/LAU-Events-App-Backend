@@ -4,6 +4,7 @@ const authController = require("../controllers/authController");
 const { isAuthenticated } = require('../middlewares/authJwt');
 const validate = require('../middlewares/validate');
 const { signinSchema, refreshTokenSchema, verifySchema } = require('../validations/auth.validation');
+const { property } = require('lodash');
 
 /**
  * @swagger
@@ -75,7 +76,7 @@ const { signinSchema, refreshTokenSchema, verifySchema } = require('../validatio
  *                  example: Invalid Password!
  */
 
-router.post('/signin', validate(signinSchema, 'body'), authController.signin);
+router.post('/signin', validate([{schema: signinSchema, property: 'body'}]), authController.signin);
 
 /**
  * @swagger
@@ -127,7 +128,7 @@ router.post('/signin', validate(signinSchema, 'body'), authController.signin);
  *                  type: string
  */
 
-router.post('/refreshToken', validate(refreshTokenSchema, 'body'), authController.refreshToken);
+router.post('/refreshToken', validate({schema: refreshTokenSchema, property: 'body'}), authController.refreshToken);
 
 /**
  * @swagger
@@ -274,6 +275,6 @@ router.get('/confirmation/admin',isAuthenticated, authController.confirmationAdm
  *                  type: string
  */
 
-router.post('/verify', validate(verifySchema, 'body'), authController.confirmationPost);
+router.post('/verify', validate({schema: verifySchema, property: 'body'}), authController.confirmationPost);
 
 module.exports = router;
