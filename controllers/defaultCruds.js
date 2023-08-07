@@ -21,7 +21,7 @@ const findOne = (Model) => {
         }
         return output;
       } catch (err) {
-        console.log(err)
+        res && respond(res, 500, { message: err.message });
       }
     };
 };
@@ -54,7 +54,7 @@ const create = (Model, schema) => {
             res && respond(res, 201, output)
             return output
         } catch (err) {
-            console.log(err)
+            res && respond(res, 500, {message: err.message})
         }
     }
 }
