@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const clubEventController = require('../controllers/clubEventController.js');
+const validate = require('../middlewares/validate');
+const { getOneSchema, createSchema, updateSchema, deleteOneSchema } = require('../validations/clubEvent.validation');
 
 /**
  * @swagger
@@ -73,7 +75,7 @@ router.get('/', clubEventController.getAll);
  *        description: Server error
  */
 
-router.get('/:id', clubEventController.getOne);
+router.get('/:id', validate([{ schema: getOneSchema, property: 'params' }]), clubEventController.getOne);
 
 /**
  * @swagger
@@ -115,7 +117,7 @@ router.get('/:id', clubEventController.getOne);
  *        description: Server error
  */
 
-router.post('/', clubEventController.create);
+router.post('/', validate([{ schema: createSchema, property: 'body' }]), clubEventController.create);
 
 /**
  * @swagger
@@ -167,7 +169,10 @@ router.post('/', clubEventController.create);
  *        description: Server error
  */
 
-router.put('/:id', clubEventController.update);
+router.put('/:id', validate([
+    { schema: updateSchema.params, property: 'params' },
+    { schema: updateSchema.body, property: 'body' },
+]), clubEventController.update);
 
 /**
  * @swagger
@@ -201,6 +206,6 @@ router.put('/:id', clubEventController.update);
  *        description: Server error
  */
 
-router.delete('/:id', clubEventController.deleteOne);
+router.delete('/:id', validate([{ schema: deleteOneSchema, property: 'params' }]), clubEventController.deleteOne);
 
 module.exports = router;
