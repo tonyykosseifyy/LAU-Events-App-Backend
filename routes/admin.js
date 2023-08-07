@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController.js');
-const validate = require('../middlewares/validate.js');
 const { createAdminSchema, adminIdSchema } = require('../validations/admin.validation.js');
-const { valid } = require('joi');
+const validate = require('../middlewares/validate');
 
 
 /**
@@ -134,7 +133,7 @@ router.get('/', adminController.getAll);
  */
 
 
-router.get('/:id', validate(adminIdSchema, 'params') , adminController.getOne);
+router.get('/:id', validate([{ schema: adminIdSchema, property: 'params' }]), adminController.getOne);
 
 
 // POST create a new admin
@@ -184,7 +183,7 @@ router.get('/:id', validate(adminIdSchema, 'params') , adminController.getOne);
  *         description: Server Error
  */
 
-router.post('/', validate(createAdminSchema, 'body') ,adminController.create);
+router.post('/', validate([{ schema: createAdminSchema, property: 'body' }]), adminController.create);
 
 // DELETE specific admin by ID
 /**
@@ -217,6 +216,6 @@ router.post('/', validate(createAdminSchema, 'body') ,adminController.create);
  *         description: Server Error
  */
 
-router.delete('/:id', validate(adminIdSchema, 'params') , adminController.deleteOne);
+router.delete('/:id', validate([{ schema: adminIdSchema, property: 'params' }]), adminController.deleteOne);
 
 module.exports = router;

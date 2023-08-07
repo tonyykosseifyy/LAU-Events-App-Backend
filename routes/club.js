@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const clubController = require('../controllers/clubController.js');
-
+const validate = require('../middlewares/validate.js');
+const { getOneSchema, createSchema, updateSchema, deleteOneSchema } = require('../validations/club.validation.js');
 /**
  * @swagger
  * tags:
@@ -74,7 +75,7 @@ router.get('/', clubController.getAll);
  *        description: Server error
  */
 
-router.get('/:id', clubController.getOne);
+router.get('/:id', validate(getOneSchema, 'params'), clubController.getOne);
 
 /**
  * @swagger
@@ -123,7 +124,7 @@ router.get('/:id', clubController.getOne);
  *        description: Server error
  */
 
-router.get('/:id/events', clubController.getWithEvents);
+router.get('/:id/events', validate(getOneSchema, 'params'), clubController.getWithEvents);
 
 /**
  * @swagger
@@ -165,7 +166,7 @@ router.get('/:id/events', clubController.getWithEvents);
  *        description: Server error
  */
 
-router.post('/', clubController.create);
+router.post('/', validate(createSchema, 'body'), clubController.create);
 
 /**
  * @swagger
@@ -216,7 +217,7 @@ router.post('/', clubController.create);
  *        description: Server error
  */
 
-router.put('/:id', clubController.update);
+router.put('/:id', validate(updateSchema, 'params'), clubController.update);
 
 /**
  * @swagger
@@ -249,6 +250,6 @@ router.put('/:id', clubController.update);
  *        description: Server error
  */
 
-router.delete('/:id', clubController.deleteOne);
+router.delete('/:id', validate(deleteOneSchema, 'params'), clubController.deleteOne);
 
 module.exports = router;
