@@ -128,7 +128,7 @@ router.post('/signin', validate([{schema: signinSchema, property: 'body'}]), aut
  *                  type: string
  */
 
-router.post('/refreshToken', validate({schema: refreshTokenSchema, property: 'body'}), authController.refreshToken);
+router.post('/refreshToken', validate([{schema: refreshTokenSchema, property: 'body'}]), authController.refreshToken);
 
 /**
  * @swagger
@@ -275,6 +275,6 @@ router.get('/confirmation/admin',isAuthenticated, authController.confirmationAdm
  *                  type: string
  */
 
-router.post('/verify', validate({schema: verifySchema, property: 'body'}), authController.confirmationPost);
+router.post('/verify', validate([{schema: verifySchema, property: 'body'}]), authController.confirmationPost);
 
 module.exports = router;

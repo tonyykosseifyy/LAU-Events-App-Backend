@@ -75,7 +75,7 @@ router.get('/', clubController.getAll);
  *        description: Server error
  */
 
-router.get('/:id', validate(getOneSchema, 'params'), clubController.getOne);
+router.get('/:id', validate([{schema: getOneSchema, property: 'params'}]), clubController.getOne);
 
 /**
  * @swagger
@@ -124,7 +124,7 @@ router.get('/:id', validate(getOneSchema, 'params'), clubController.getOne);
  *        description: Server error
  */
 
-router.get('/:id/events', validate(getOneSchema, 'params'), clubController.getWithEvents);
+router.get('/:id/events', validate([{schema: getOneSchema, property: 'params'}]), clubController.getWithEvents);
 
 /**
  * @swagger
@@ -166,7 +166,7 @@ router.get('/:id/events', validate(getOneSchema, 'params'), clubController.getWi
  *        description: Server error
  */
 
-router.post('/', validate(createSchema, 'body'), clubController.create);
+router.post('/', validate([{schema: createSchema, property: 'body'}]), clubController.create);
 
 /**
  * @swagger
@@ -217,7 +217,10 @@ router.post('/', validate(createSchema, 'body'), clubController.create);
  *        description: Server error
  */
 
-router.put('/:id', validate(updateSchema, 'params'), clubController.update);
+router.put('/:id', validate([
+    {schema: updateSchema.params, property: 'params'},
+    {schema: updateSchema.body , property: 'body'}
+]), clubController.update);
 
 /**
  * @swagger
@@ -250,6 +253,6 @@ router.put('/:id', validate(updateSchema, 'params'), clubController.update);
  *        description: Server error
  */
 
-router.delete('/:id', validate(deleteOneSchema, 'params'), clubController.deleteOne);
+router.delete('/:id', validate([{schema: deleteOneSchema, property: 'params'}]), clubController.deleteOne);
 
 module.exports = router;
