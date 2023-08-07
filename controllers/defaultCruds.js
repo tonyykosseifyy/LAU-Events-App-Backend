@@ -24,7 +24,7 @@ const findOne = (Model) => {
         console.log(err)
       }
     };
-  };
+};
 
 const getOne = (Model) => {
     return async (req, res, next) => {

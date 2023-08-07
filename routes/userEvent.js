@@ -6,103 +6,212 @@ const userEventsController = require('../controllers/userEventsController.js');
  * @swagger
  * tags:
  *   name: UserEvents
- *   description: The UserEvents managing API
- * 
- * /userEvent:
- *   get:
- *     tags: [UserEvents]
- *     summary: Retrieve a list of UserEvents
- *     responses:
- *       200:
- *         description: A list of UserEvents
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserEvent'
- * 
- *   post:
- *     tags: [UserEvents]
- *     summary: Create a new UserEvent
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UserEvent'
- *     responses:
- *       201:
- *         description: The created UserEvent
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserEvent'
- * 
- * /userEvent/{id}:
- *   get:
- *     tags: [UserEvents]
- *     summary: Retrieve a single UserEvent
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the UserEvent
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: The requested UserEvent
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserEvent'
- * 
- *   put:
- *     tags: [UserEvents]
- *     summary: Update a UserEvent
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the UserEvent to update
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UserEvent'
- *     responses:
- *       200:
- *         description: The updated UserEvent
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserEvent'
- * 
- *   delete:
- *     tags: [UserEvents]
- *     summary: Delete a UserEvent
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the UserEvent to delete
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: The deleted UserEvent
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserEvent'
+ *   description: User event management operations
+ */
+
+/**
+ * @swagger
+ * /userEvents/:
+ *  get:
+ *    tags: [UserEvents]
+ *    summary: Get all user events
+ *    description: Retrieve all user events
+ *    responses:
+ *      '200':
+ *        description: A successful response, returns an array of user events
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                type: object
+ *                properties:
+ *                  userId:
+ *                    type: integer
+ *                    example: 1
+ *                  eventId:
+ *                    type: integer
+ *                    example: 1
+ *                  status:
+ *                    type: string
+ *                    example: "Accepted"
+ *                  responseTime:
+ *                    type: string
+ *                    format: date-time
+ *                    example: "2023-08-07T10:00:00.000Z"
+ *      '500':
+ *        description: Server error
  */
 
 router.get('/', userEventsController.getAll);
+
+/**
+ * @swagger
+ * /userEvents/{id}:
+ *  get:
+ *    tags: [UserEvents]
+ *    summary: Get a user event by ID
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *        required: true
+ *        description: Numeric ID of the user event to retrieve
+ *    responses:
+ *      '200':
+ *        description: A user event object
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                userId:
+ *                  type: integer
+ *                  example: 1
+ *                eventId:
+ *                  type: integer
+ *                  example: 1
+ *                status:
+ *                  type: string
+ *                  example: "Accepted"
+ *                responseTime:
+ *                  type: string
+ *                  format: date-time
+ *                  example: "2023-08-07T10:00:00.000Z"
+ *      '404':
+ *        description: User event not found
+ *      '500':
+ *        description: Server error
+ */
+
 router.get('/:id', userEventsController.getOne);
+
+/**
+ * @swagger
+ * /userEvents/:
+ *  post:
+ *    tags: [UserEvents]
+ *    summary: Create a new user event
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              userId:
+ *                type: integer
+ *                example: 1
+ *              eventId:
+ *                type: integer
+ *                example: 1
+ *              status:
+ *                type: string
+ *                example: "Accepted"
+ *    responses:
+ *      '201':
+ *        description: User event created successfully
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                userId:
+ *                  type: integer
+ *                  example: 1
+ *                eventId:
+ *                  type: integer
+ *                  example: 1
+ *                status:
+ *                  type: string
+ *                  example: "Accepted"
+ *                responseTime:
+ *                  type: string
+ *                  format: date-time
+ *                  example: "2023-08-07T10:00:00.000Z"
+ *      '400':
+ *        description: Bad request
+ *      '500':
+ *        description: Server error
+ */
+
 router.post('/', userEventsController.create);
+
+/**
+ * @swagger
+ * /userEvents/{id}:
+ *  put:
+ *    tags: [UserEvents]
+ *    summary: Update a user event by ID
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *        required: true
+ *        description: Numeric ID of the user event to update
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: string
+ *                example: "Accepted"
+ *    responses:
+ *      '200':
+ *        description: User event updated successfully
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                userId:
+ *                  type: integer
+ *                  example: 1
+ *                eventId:
+ *                  type: integer
+ *                  example: 1
+ *                status:
+ *                  type: string
+ *                  example: "Accepted"
+ *                responseTime:
+ *                  type: string
+ *                  format: date-time
+ *                  example: "2023-08-07T10:00:00.000Z"
+ *      '404':
+ *        description: User event not found
+ *      '500':
+ *        description: Server error
+ */
+
 router.put('/:id', userEventsController.update);
+
+/**
+ * @swagger
+ * /userEvents/{id}:
+ *  delete:
+ *    tags: [UserEvents]
+ *    summary: Delete a user event by ID
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *        required: true
+ *        description: Numeric ID of the user event to delete
+ *    responses:
+ *      '204':
+ *        description: User event deleted successfully
+ *      '404':
+ *        description: User event not found
+ *      '500':
+ *        description: Server error
+ */
+
 router.delete('/:id', userEventsController.deleteOne);
 
 module.exports = router;
