@@ -2,125 +2,272 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController.js');
 
-// Documentation for User routes
 /**
  * @swagger
  * tags:
  *   name: Users
- *   description: Management and retrieval of users
+ *   description: User management operations
  */
 
 /**
  * @swagger
- * /users:
+ * /users/:
  *  get:
- *    summary: Retrieve a list of users
  *    tags: [Users]
+ *    summary: Get all users
+ *    description: Retrieve all users
  *    responses:
- *      200:
- *        description: A list of users
+ *      '200':
+ *        description: A successful response, returns an array of users
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/User'
+ *              type: array
+ *              items:
+ *                type: object
+ *                properties:
+ *                  id:
+ *                    type: integer
+ *                    example: 1
+ *                  password:
+ *                    type: string
+ *                    example: "hashed_password"
+ *                  email:
+ *                    type: string
+ *                    example: "user@example.com"
+ *                  userType:
+ *                    type: string
+ *                    example: "User"
+ *                  isVerified:
+ *                    type: boolean
+ *                    example: false
+ *                  verificationToken:
+ *                    type: string
+ *                    example: "verification_token"
+ *                  major:
+ *                    type: string
+ *                    example: "Computer Science"
+ *      '500':
+ *        description: Server error
  */
+
 router.get('/', userController.getAll);
 
 /**
  * @swagger
  * /users/{id}:
  *  get:
- *    summary: Retrieve a user by ID
  *    tags: [Users]
+ *    summary: Get a user by ID
  *    parameters:
- *    - in: path
- *      name: id
- *      schema:
- *        type: integer
- *      required: true
- *      description: Numeric ID of the user to retrieve
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *        required: true
+ *        description: Numeric ID of the user to retrieve
  *    responses:
- *      200:
- *        description: Specific user
+ *      '200':
+ *        description: A user object
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/User'
+ *              type: object
+ *              properties:
+ *                id:
+ *                  type: integer
+ *                  example: 1
+ *                password:
+ *                  type: string
+ *                  example: "hashed_password"
+ *                email:
+ *                  type: string
+ *                  example: "user@example.com"
+ *                userType:
+ *                  type: string
+ *                  example: "User"
+ *                isVerified:
+ *                  type: boolean
+ *                  example: false
+ *                verificationToken:
+ *                  type: string
+ *                  example: "verification_token"
+ *                major:
+ *                  type: string
+ *                  example: "Computer Science"
+ *      '404':
+ *        description: User not found
+ *      '500':
+ *        description: Server error
  */
+
 router.get('/:id', userController.getOne);
 
 /**
  * @swagger
- * /users:
+ * /users/:
  *  post:
- *    summary: Create a new user
  *    tags: [Users]
+ *    summary: Create a new user
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/User'
+ *            type: object
+ *            properties:
+ *              password:
+ *                type: string
+ *                example: "hashed_password"
+ *              email:
+ *                type: string
+ *                example: "user@example.com"
+ *              userType:
+ *                type: string
+ *                example: "User"
+ *              isVerified:
+ *                type: boolean
+ *                example: false
+ *              verificationToken:
+ *                type: string
+ *                example: "verification_token"
+ *              major:
+ *                type: string
+ *                example: "Computer Science"
  *    responses:
- *      200:
- *        description: The created user
+ *      '201':
+ *        description: User created successfully
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/User'
+ *              type: object
+ *              properties:
+ *                id:
+ *                  type: integer
+ *                  example: 1
+ *                password:
+ *                  type: string
+ *                  example: "hashed_password"
+ *                email:
+ *                  type: string
+ *                  example: "user@example.com"
+ *                userType:
+ *                  type: string
+ *                  example: "User"
+ *                isVerified:
+ *                  type: boolean
+ *                  example: false
+ *                verificationToken:
+ *                  type: string
+ *                  example: "verification_token"
+ *                major:
+ *                  type: string
+ *                  example: "Computer Science"
+ *      '400':
+ *        description: Bad request
+ *      '500':
+ *        description: Server error
  */
+
 router.post('/', userController.create);
 
 /**
  * @swagger
  * /users/{id}:
  *  put:
- *    summary: Update a user
  *    tags: [Users]
+ *    summary: Update a user by ID
  *    parameters:
- *    - in: path
- *      name: id
- *      schema:
- *        type: integer
- *      required: true
- *      description: Numeric ID of the user to update
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *        required: true
+ *        description: Numeric ID of the user to update
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/User'
+ *            type: object
+ *            properties:
+ *              password:
+ *                type: string
+ *                example: "new_hashed_password"
+ *              email:
+ *                type: string
+ *                example: "new_user@example.com"
+ *              userType:
+ *                type: string
+ *                example: "Admin"
+ *              isVerified:
+ *                type: boolean
+ *                example: true
+ *              verificationToken:
+ *                type: string
+ *                example: "new_verification_token"
+ *              major:
+ *                type: string
+ *                example: "Data Science"
  *    responses:
- *      200:
- *        description: The updated user
+ *      '200':
+ *        description: User updated successfully
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/User'
+ *              type: object
+ *              properties:
+ *                id:
+ *                  type: integer
+ *                  example: 1
+ *                password:
+ *                  type: string
+ *                  example: "new_hashed_password"
+ *                email:
+ *                  type: string
+ *                  example: "new_user@example.com"
+ *                userType:
+ *                  type: string
+ *                  example: "Admin"
+ *                isVerified:
+ *                  type: boolean
+ *                  example: true
+ *                verificationToken:
+ *                  type: string
+ *                  example: "new_verification_token"
+ *                major:
+ *                  type: string
+ *                  example: "Data Science"
+ *      '404':
+ *        description: User not found
+ *      '500':
+ *        description: Server error
  */
+
 router.put('/:id', userController.update);
 
 /**
  * @swagger
  * /users/{id}:
  *  delete:
- *    summary: Delete a user
  *    tags: [Users]
+ *    summary: Delete a user by ID
  *    parameters:
- *    - in: path
- *      name: id
- *      schema:
- *        type: integer
- *      required: true
- *      description: Numeric ID of the user to delete
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *        required: true
+ *        description: Numeric ID of the user to delete
  *    responses:
- *      200:
- *        description: The deleted user
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/User'
+ *      '204':
+ *        description: User deleted successfully
+ *      '404':
+ *        description: User not found
+ *      '500':
+ *        description: Server error
  */
+
 router.delete('/:id', userController.deleteOne);
 
 module.exports = router;
