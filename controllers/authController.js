@@ -138,7 +138,7 @@ exports.confirmationPost = async (req, res) => {
   if (!user.verificationToken){
     return respond(res, 400, {message: "User already verified"});
   }
-  const isValid = authService.verifyToken(decodedToken, user.verificationToken); 
+  const isValid = authService.verifyToken(code, user.verificationToken); 
   
   if (!isValid) {
     return respond(res, 400, {message: "Invalid token"});

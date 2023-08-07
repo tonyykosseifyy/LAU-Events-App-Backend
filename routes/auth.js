@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const authController = require("../controllers/authController");
 const { isAuthenticated } = require('../middlewares/authJwt');
+const validate = require('../middlewares/validate');
+const { signinSchema, refreshTokenSchema, verifySchema } = require('../validations/auth.validation');
 
 /**
  * @swagger
@@ -73,7 +75,7 @@ const { isAuthenticated } = require('../middlewares/authJwt');
  *                  example: Invalid Password!
  */
 
-router.post('/signin', authController.signin);
+router.post('/signin', validate(signinSchema, 'body'), authController.signin);
 
 /**
  * @swagger
@@ -125,7 +127,7 @@ router.post('/signin', authController.signin);
  *                  type: string
  */
 
-router.post('/refreshToken', authController.refreshToken);
+router.post('/refreshToken', validate(refreshTokenSchema, 'body'), authController.refreshToken);
 
 /**
  * @swagger
@@ -272,6 +274,6 @@ router.get('/confirmation/admin',isAuthenticated, authController.confirmationAdm
  *                  type: string
  */
 
-router.post('/verify', authController.confirmationPost);
+router.post('/verify', validate(verifySchema, 'body'), authController.confirmationPost);
 
 module.exports = router;
