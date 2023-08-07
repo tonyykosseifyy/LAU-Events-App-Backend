@@ -35,13 +35,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // authenticated middleware for all routes except /auth
-// app.use((req, res, next) => {
-//   if (!req.path.startsWith('/auth') && !req.path.startsWith('/api-docs')) {
-//     isAuthenticated(req, res, next);
-//   } else {
-//     next();
-//   }
-// });
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/auth') && !req.path.startsWith('/api-docs')) {
+    isAuthenticated(req, res, next);
+  } else {
+    next();
+  }
+});
 
 require('./services/swagger.service.js')(app);
 app.use('/', indexRouter);
