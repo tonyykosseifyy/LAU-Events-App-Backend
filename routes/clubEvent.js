@@ -6,102 +6,201 @@ const clubEventController = require('../controllers/clubEventController.js');
  * @swagger
  * tags:
  *   name: ClubEvent
- *   description: Operations on club events
+ *   description: ClubEvent management operations
  */
 
 /**
  * @swagger
- * /clubevents:
- *   get:
- *     tags: [ClubEvent]
- *     description: Get all club events
- *     responses:
- *       200:
- *         description: Success
- *         schema:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/ClubEvent'
+ * /clubEvent/:
+ *  get:
+ *    tags: [ClubEvent]
+ *    summary: Get all ClubEvents
+ *    description: Retrieve all ClubEvents
+ *    responses:
+ *      '200':
+ *        description: A successful response, returns an array of ClubEvents
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                type: object
+ *                properties:
+ *                  clubId:
+ *                    type: integer
+ *                    example: 1
+ *                  eventId:
+ *                    type: integer
+ *                    example: 1
+ *      '500':
+ *        description: Server error
  */
+
 router.get('/', clubEventController.getAll);
 
 /**
  * @swagger
- * /clubevents/{id}:
- *   get:
- *     tags: [ClubEvent]
- *     description: Get a club event by ID
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Success
- *         schema:
- *           $ref: '#/components/schemas/ClubEvent'
+ * /clubEvent/{id}:
+ *  get:
+ *    tags: [ClubEvent]
+ *    summary: Get a specific ClubEvent
+ *    description: Retrieve a specific ClubEvent by its ID
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *          example: 1
+ *        required: true
+ *        description: Numeric ID of the ClubEvent to retrieve
+ *    responses:
+ *      '200':
+ *        description: A successful response, returns the ClubEvent
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                clubId:
+ *                  type: integer
+ *                  example: 1
+ *                eventId:
+ *                  type: integer
+ *                  example: 1
+ *      '404':
+ *        description: ClubEvent not found
+ *      '500':
+ *        description: Server error
  */
+
 router.get('/:id', clubEventController.getOne);
 
 /**
  * @swagger
- * /clubevents:
- *   post:
- *     tags: [ClubEvent]
- *     description: Create a new club event
- *     parameters:
- *       - name: clubEvent
- *         in: body
- *         required: true
- *         schema:
- *           $ref: '#/components/schemas/ClubEvent'
- *     responses:
- *       201:
- *         description: Created
+ * /clubEvent/:
+ *  post:
+ *    tags: [ClubEvent]
+ *    summary: Create a new ClubEvent
+ *    description: Create a new ClubEvent
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              clubId:
+ *                type: integer
+ *                example: 1
+ *              eventId:
+ *                type: integer
+ *                example: 2
+ *    responses:
+ *      '201':
+ *        description: Successfully created a new ClubEvent
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                clubId:
+ *                  type: integer
+ *                  example: 1
+ *                eventId:
+ *                  type: integer
+ *                  example: 2
+ *      '400':
+ *        description: Validation error
+ *      '500':
+ *        description: Server error
  */
+
 router.post('/', clubEventController.create);
 
 /**
  * @swagger
- * /clubevents/{id}:
- *   put:
- *     tags: [ClubEvent]
- *     description: Update a club event by ID
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         schema:
- *           type: integer
- *       - name: clubEvent
- *         in: body
- *         required: true
- *         schema:
- *           $ref: '#/components/schemas/ClubEvent'
- *     responses:
- *       200:
- *         description: Success
+ * /clubEvent/{id}:
+ *  put:
+ *    tags: [ClubEvent]
+ *    summary: Update a specific ClubEvent
+ *    description: Update a specific ClubEvent by its ID
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *          example: 1
+ *        required: true
+ *        description: Numeric ID of the ClubEvent to update
+ *    requestBody:
+ *      required: false
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              clubId:
+ *                type: integer
+ *                example: 1
+ *              eventId:
+ *                type: integer
+ *                example: 2
+ *    responses:
+ *      '200':
+ *        description: Successfully updated the ClubEvent
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                clubId:
+ *                  type: integer
+ *                  example: 1
+ *                eventId:
+ *                  type: integer
+ *                  example: 2
+ *      '400':
+ *        description: Validation error
+ *      '404':
+ *        description: ClubEvent not found
+ *      '500':
+ *        description: Server error
  */
+
 router.put('/:id', clubEventController.update);
 
 /**
  * @swagger
- * /clubevents/{id}:
- *   delete:
- *     tags: [ClubEvent]
- *     description: Delete a club event by ID
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       204:
- *         description: Deleted successfully
+ * /clubEvent/{id}:
+ *  delete:
+ *    tags: [ClubEvent]
+ *    summary: Delete a specific ClubEvent
+ *    description: Delete a specific ClubEvent by its ID
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *          example: 1
+ *        required: true
+ *        description: Numeric ID of the ClubEvent to delete
+ *    responses:
+ *      '204':
+ *        description: Successfully deleted the ClubEvent
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: 'Item deleted successfully'
+ *      '404':
+ *        description: ClubEvent not found
+ *      '500':
+ *        description: Server error
  */
+
 router.delete('/:id', clubEventController.deleteOne);
 
 module.exports = router;
