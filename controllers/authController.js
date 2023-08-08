@@ -50,6 +50,7 @@ exports.signin = async (req, res) => {
     accessToken: accessToken,
     refreshToken: refreshToken,
     createdAt: user.createdAt,
+    major: user.major,
   });
 };
 
@@ -88,9 +89,9 @@ exports.refreshToken = async (req, res) => {
 };
 
 exports.signout = async (req, res) => {
-  const user_id = req.userId;
+  const id = req.userId;
   try {
-    await RefreshToken.destroy({ where: { user_id } });
+    await RefreshToken.destroy({ where: { id } });
     respond(res, 200, { message: "User was logged out!" });
   } catch(err) {
     respond(res, 500, { message: err.message });
@@ -98,7 +99,7 @@ exports.signout = async (req, res) => {
 };
 
 exports.signup = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, major } = req.body;
 
   const old_user = await User.findOne({
     where: {
@@ -121,7 +122,7 @@ exports.signup = async (req, res) => {
     password: hashedPassword,
     userType: 'User',
     isVerified: false,
-    verificationToken: hashedVerificationCode
+    verificationToken: verificationCode
   };
 
   const user = await userController.create({ ...req, body: newBody });
@@ -149,11 +150,13 @@ exports.confirmationPost = async (req, res) => {
   } else if (user.isVerified) {
     return respond(res, 400, { message: "User already verified" });
   }
-  
-  const isValid = authService.verifyPassword(code, user.verificationToken);
+  if (!user.verificationToken){
+    return respond(res, 400, {message: "User already verified"});
+  }
+  const isValid = authService.verifyToken(code, user.verificationToken); 
   
   if (!isValid) {
-    return respond(res, 400, { message: "Invalid token" });
+    return respond(res, 400, {message: "Invalid token"});
   }
 
   user.isVerified = true;
@@ -168,6 +171,7 @@ exports.confirmationPost = async (req, res) => {
     accessToken: accessToken,
     refreshToken: refreshToken,
     createdAt: user.createdAt,
+    major: user.major 
   });
 };
 

@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const config = require("../config/auth.config");
 const { RefreshToken } = require("../models");
 
@@ -25,8 +26,20 @@ async function verifyPassword(password, hashedPassword) {
   return isValid;
 }
 
+function verifyToken(token, storedToken) {
+  const tokenBuffer = Buffer.from(token);
+  const storedTokenBuffer = Buffer.from(storedToken);
+
+  if (tokenBuffer.length !== storedTokenBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(tokenBuffer, storedTokenBuffer);
+}
+
 module.exports = {
   createToken,
   hashPassword,
-  verifyPassword
+  verifyPassword,
+  verifyToken
 };

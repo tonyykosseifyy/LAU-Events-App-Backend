@@ -40,6 +40,7 @@ const isAuthenticated = async (req, res, next) => {
   });
 };
 
+
 const isAdmin = async (req, res, next) => {
   const role = req.role ;
 

@@ -19,7 +19,6 @@ const syncronizeDB = async () => {
         console.log('Unable to syncronize the database:', err);
     }
 }
-
 connectToDB()
 config.development.mySql.client = sequelize
 require('../models/index.js')

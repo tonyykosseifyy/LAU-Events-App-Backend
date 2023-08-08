@@ -21,10 +21,10 @@ const findOne = (Model) => {
         }
         return output;
       } catch (err) {
-        console.log(err)
+        res && respond(res, 500, { message: err.message });
       }
     };
-  };
+};
 
 const getOne = (Model) => {
     return async (req, res, next) => {
@@ -54,7 +54,7 @@ const create = (Model, schema) => {
             res && respond(res, 201, output)
             return output
         } catch (err) {
-            console.log(err)
+            res && respond(res, 500, {message: err.message})
         }
     }
 }
@@ -72,7 +72,6 @@ const update = (Model) => {
             if (!output){
                 return respond(res, 404, {message: "Item not found"})
             }
-
             await output.update(req.body)
             return respond(res, 200, output)
         } catch(err){

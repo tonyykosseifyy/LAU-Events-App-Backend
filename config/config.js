@@ -7,7 +7,7 @@ module.exports = {
             options:{
                 host: env.DB_HOST || 'localhost',
                 port: env.DB_PORT || 3306,
-                database: env.DB_NAME || 'LAU_Event_App',
+                database: env.DB_NAME || 'lau_event_app',
                 dialect: 'mysql',
                 username: env.DB_USERNAME || 'root',
                 password: env.DB_PASS || '',
