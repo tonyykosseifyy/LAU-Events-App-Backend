@@ -18,9 +18,9 @@ const createSchema = Joi.object({
     'date.format': 'End time must be a date-time string.',
     'any.required': 'End time is required.'
   }),
-  status: Joi.string().valid('active', 'inactive').messages({
+  status: Joi.string().valid('active', 'Cancelled').messages({
     'string.base': 'Status must be a string.',
-    'any.only': 'Status must be either active or inactive.'
+    'any.only': 'Status must be either active or Cancelled.'
   }),
   clubIds: Joi.array().items(Joi.number().integer()).messages({
     'number.base': 'Club IDs must be numbers.',
