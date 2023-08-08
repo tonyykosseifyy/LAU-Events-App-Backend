@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config");
 const { codeSchema, loginSchema, refreshTokenSchema } = require("../validations/auth");
 
+
+
 exports.signin = async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
 
@@ -24,12 +26,11 @@ exports.signin = async (req, res) => {
   });
   
   if (!user) {
-    return this.signup(req, res);
+    return res.status(404).send({ message: "User Not found. please Sign up instead" });
   }
 
   if (!user.isVerified) {
-    await user.destroy();
-    return this.signup(req, res);
+    return res.status(404).send({ message: "User Not Verified Yet. Please Verify Your account first" });
   }
   
   const passwordIsValid = await authService.verifyPassword(password, user.password);
@@ -48,6 +49,7 @@ exports.signin = async (req, res) => {
     email: user.email,
     accessToken: accessToken,
     refreshToken: refreshToken,
+    createdAt: user.createdAt,
   });
 };
 
@@ -98,6 +100,18 @@ exports.signout = async (req, res) => {
 exports.signup = async (req, res) => {
   const { email, password } = req.body;
 
+  const old_user = await User.findOne({
+    where: {
+      email: email,
+    }
+  });
+  if ( old_user && old_user.isVerified) {
+    return respond(res, 400, { message: "Failed! Email is already in use!" });
+  }
+  if ( old_user && !old_user.isVerified) {
+    await old_user.destroy();
+  }
+  
   const { verificationCode, hashedVerificationCode } = await emailService.createVerificationToken();
 
   const hashedPassword = await authService.hashPassword(password);
@@ -153,6 +167,7 @@ exports.confirmationPost = async (req, res) => {
     email: user.email,
     accessToken: accessToken,
     refreshToken: refreshToken,
+    createdAt: user.createdAt,
   });
 };
 
