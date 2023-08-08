@@ -3,7 +3,7 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const { isAuthenticated } = require('../middlewares/authJwt');
 const validate = require('../middlewares/validate');
-const { signinSchema, refreshTokenSchema, verifySchema } = require('../validations/auth.validation');
+const { signinSchema, refreshTokenSchema, verifySchema, signupSchema } = require('../validations/auth.validation');
 const { property } = require('lodash');
 
 /**
@@ -168,8 +168,69 @@ router.post('/refreshToken', validate([{schema: refreshTokenSchema, property: 'b
  */
 router.post('/signout',isAuthenticated, authController.signout);
 
+/**
+ * @swagger
+ * /signup:
+ *  post:
+ *    tags: [Auth]
+ *    summary: User Sign-up
+ *    description: New user registration
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            required:
+ *              - email
+ *              - password
+ *              - major
+ *            properties:
+ *              email:
+ *                type: string
+ *                example: user@example.com
+ *              password:
+ *                type: string
+ *                example: Password123!
+ *              major:
+ *                type: string
+ *                example: Computer Science
+ *    responses:
+ *      '201':
+ *        description: Successfully registered
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: A verification email has been sent to user@example.com.
+ *                userId:
+ *                  type: integer
+ *      '400':
+ *        description: Bad Request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: Failed! Email is already in use!
+ *      '500':
+ *        description: Server Error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: Error message
+ */
 
-router.post('/signup', authController.signup);
+router.post('/signup', validate([{schema: signupSchema, property: 'body'}]), authController.signup);
 
 /**
  * @swagger

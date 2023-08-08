@@ -32,11 +32,11 @@ const updateSchema = {
     }),
   }),
   body: Joi.object({
-    clubName: Joi.string().required().messages({
+    clubName: Joi.string().messages({
       'string.base': 'Club name must be a string.',
       'any.required': 'Club name is required.'
     }),
-    status: Joi.string().valid('active', 'inactive').required().messages({
+    status: Joi.string().valid('active', 'inactive').messages({
       'string.base': 'Status must be a string.',
       'any.only': 'Status must be either "active" or "inactive".',
       'any.required': 'Status is required.'
