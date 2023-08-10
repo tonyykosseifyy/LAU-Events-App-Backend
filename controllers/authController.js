@@ -41,7 +41,7 @@ exports.signin = async (req, res) => {
       message: "Invalid Password!"
     });
   }
-
+  
   const { accessToken, refreshToken } = await authService.createToken(user, user.userType);
 
   res.status(200).send({
@@ -106,31 +106,30 @@ exports.signup = async (req, res) => {
       email: email,
     }
   });
-  if ( old_user && old_user.isVerified) {
+  if (old_user && old_user.isVerified) {
     return respond(res, 400, { message: "Failed! Email is already in use!" });
   }
-  if ( old_user && !old_user.isVerified) {
+  if (old_user && !old_user.isVerified) {
     await old_user.destroy();
   }
-  
+
   const { verificationCode, hashedVerificationCode } = await emailService.createVerificationToken();
 
   const hashedPassword = await authService.hashPassword(password);
-  // remove req.body and username
   const newBody = {
     ...req.body,
     password: hashedPassword,
     userType: 'User',
     isVerified: false,
-    verificationToken: verificationCode
+    verificationToken: verificationCode 
   };
 
   const user = await userController.create({ ...req, body: newBody });
-  
-  emailService.sendVerificationEmail(email, verificationCode).then(() => {
-    respond(res, 201, { message: `A verification email has been sent to ${email}.`, userId: user.id });
-  }).catch(err => {
-    return respond(res, 500, { message: err.message });
+
+  respond(res, 201, { message: `A verification email has been sent to ${email}. Please check your email. If you can't find a verification code, you can request to resend a new one.`, userId: user.id });
+
+  emailService.sendVerificationEmail(email, verificationCode).catch(err => {
+    console.error(`Failed to send verification email to ${email}: ${err.message}`);
   });
 };
 
