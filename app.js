@@ -8,7 +8,7 @@ require("./utils/database");
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const adminRouter = require('./routes/admin');
+// const adminRouter = require('./routes/admin');
 const clubRouter = require('./routes/club');
 const eventRouter = require('./routes/event');
 const userRouter = require('./routes/users');
@@ -45,7 +45,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 require('./services/swagger.service.js')(app);
 app.use('/', indexRouter);
-app.use('/admins', adminRouter);
+// app.use('/admins', adminRouter);
 app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
 app.use('/dashboard', dashboardRouter);
