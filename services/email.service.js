@@ -4,6 +4,18 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config().parsed;
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: env.EMAIL_USER,
+    pass: env.EMAIL_PASS
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
 
 async function createVerificationToken() {
   // generate only numbers
@@ -21,26 +33,12 @@ async function createVerificationToken() {
 }
 
 async function sendVerificationEmail(email, verificationCode) {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: 'tonykosseify123@gmail.com',
-      pass: 'ltblnbphxmmagpfo'
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
-
   const mailOptions = {
     from: env.EMAIL,
     to: email,
     subject: 'Account Verification Token',
     text: `Hello, this is your verification code ${verificationCode}`,
   };
-
 
   return transporter.sendMail(mailOptions);
 }
