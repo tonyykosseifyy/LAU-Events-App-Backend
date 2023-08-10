@@ -10,7 +10,7 @@ const deleteOne = defaultCruds.deleteOne(UserEvent)
 
 const create = async (req, res, next) => {
     try {
-        const userId = req.body.userId;
+        const userId = req.userId;
         const eventId = req.body.eventId;
         const status = req.body.status;
         const event = await Event.findByPk(eventId);

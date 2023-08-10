@@ -109,7 +109,7 @@ const getAllEvents = async (req, res, next) => {
 
 const getAllDeclinedEvents = async (req, res, next) => {
   try {
-      const userId = req.userId;
+    const userId = req.userId;
 
     const declinedEvents = await UserEvent.findAll({
       attributes: ['eventId', 'responseTime'],

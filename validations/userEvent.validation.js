@@ -2,11 +2,6 @@ const Joi = require('joi');
 
 // Validation schema for POST /userEvents
 const createSchema = Joi.object({
-  userId: Joi.number().integer().required().messages({
-    'number.base': 'User ID must be a number.',
-    'number.integer': 'User ID must be an integer.',
-    'any.required': 'User ID is required.'
-  }),
   eventId: Joi.number().integer().required().messages({
     'number.base': 'Event ID must be a number.',
     'number.integer': 'Event ID must be an integer.',

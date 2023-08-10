@@ -51,6 +51,10 @@ const { getOneSchema, createSchema, updateSchema } = require('../validations/eve
 
 router.get('/', eventController.getAll);
 
+
+router.get('/declinedEvents', eventController.getAllDeclinedEvents); 
+
+
 /**
  * @swagger
  * /event/{id}:

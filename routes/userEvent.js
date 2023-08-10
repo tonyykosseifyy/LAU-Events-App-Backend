@@ -47,6 +47,7 @@ const { getOneSchema, createSchema, updateSchema } = require('../validations/use
 
 router.get('/', userEventsController.getAll);
 
+
 /**
  * @swagger
  * /userEvents/{id}:
