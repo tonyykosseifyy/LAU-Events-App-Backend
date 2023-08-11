@@ -48,12 +48,10 @@ const update = async (req, res, next) => {
     }
 }
 const deleteOne = defaultCruds.deleteOne(User)
-const findOne = defaultCruds.findOne(User)
 
 module.exports = {
     getAll,
     getOne,
     update,
     deleteOne,
-    findOne
 }
