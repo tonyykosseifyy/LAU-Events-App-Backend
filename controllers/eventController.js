@@ -3,9 +3,37 @@ const defaultCruds = require("./defaultCruds.js");
 const respond = require("../utils/respond.js");
 
 const getAll = defaultCruds.getAll(Event);
-const getOne = defaultCruds.getOne(Event);
+
 const update = defaultCruds.update(Event);
 const deleteOne = defaultCruds.deleteOne(Event);
+
+const getOneEvent = async (req, res, next) => {
+  // get the event, and include if its accepted or declined by this user 
+  const userId = req.userId ;
+  try {
+    const event = await Event.findByPk(req.params.id, {}) ;
+
+    if (!event) {
+      return respond(res, 404, { message: "Event not found" });
+    }
+
+    // check if the user has accepted or declined the event
+    const userEvent = await UserEvent.findOne({
+      where: {
+        userId,
+        eventId: req.params.id,
+      },
+    });
+    if ( userEvent ) {
+      event.dataValues.userStatus = userEvent.status;
+      event.dataValues.userEventId = userEvent.id;
+    }
+
+    res && respond(res, 200, event);
+  } catch (err) {
+    return respond(res, 500, err);
+  }
+}
 
 const getEventDetails = async (req, res, next) => {
   try {
@@ -131,7 +159,7 @@ const getAllDeclinedEvents = async (req, res, next) => {
 
 module.exports = {
   getAll: getAllEvents,
-  getOne,
+  getOne: getOneEvent,
   create: createEvent,
   update,
   deleteOne,
