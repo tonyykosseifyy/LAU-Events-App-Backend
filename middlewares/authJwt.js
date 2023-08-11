@@ -21,7 +21,7 @@ const isAuthenticated = async (req, res, next) => {
   }
   const token = bearer_token.split(' ')[1];
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, config.jwt.secret, (err, decoded) => {
     if (err) {
       return catchError(err, res);
     }

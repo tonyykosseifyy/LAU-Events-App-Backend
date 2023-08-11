@@ -3,7 +3,6 @@ const emailService = require("../services/email.service");
 const respond = require("../utils/respond");
 const userController = require("./userController");
 const { User } = require("../models");
-const { RefreshToken }  = require("../models");
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config");
 const { codeSchema, loginSchema, refreshTokenSchema } = require("../validations/auth");
@@ -35,6 +34,7 @@ exports.signin = async (req, res) => {
   
   const passwordIsValid = await authService.verifyPassword(password, user.password);
 
+  
   if (!passwordIsValid) {
     return res.status(401).send({
       accessToken: null,
@@ -43,6 +43,10 @@ exports.signin = async (req, res) => {
   }
   
   const { accessToken, refreshToken } = await authService.createToken(user, user.userType);
+
+  // save refresh token in user database
+  user.refreshToken = refreshToken; 
+  await user.save();
 
   res.status(200).send({
     id: user.id,
@@ -62,36 +66,38 @@ exports.refreshToken = async (req, res) => {
   
   const { refreshToken: requestToken } = value;
 
-
-  let refreshToken = await RefreshToken.findOne({ 
-    where: { token: requestToken }, 
+  // validate refresh token and generate new access token
+  jwt.verify(requestToken, config.refresh.secret, (err, decoded) => {
+    if (err) {
+      return respond(res, 403, { message: "Unauthorized! Refresh Token was expired!" })
+    }
+    User.findOne({ 
+      where: { 
+        id: decoded.id,
+        refreshToken: requestToken, 
+      } 
+    })
+    .then((user) => {
+      if ( user ) {
+        const role = user.userType ;
+        const newAccessToken = jwt.sign({ id: user.id, role }, config.jwt.secret, { expiresIn: config.jwt.expiration });
+        return respond(res, 200, { accessToken: newAccessToken });
+      }
+      return res.status(404).send({ message: "User Not found." });
+    })
+    .catch((err) => {
+      return res.status(500).send({ message: err.message })  ;
+    });    
   });
-  
-  if (!refreshToken) {
-    respond(res, 403, { message: "Refresh token is not in database!" });
-    return;
-  }
-
-  const user = await refreshToken.getUser();
-
-  if (RefreshToken.verifyExpiration(refreshToken)) {
-    RefreshToken.destroy({ where: { id: refreshToken.id } });
-    respond(res, 403, { message: "Refresh token was expired. Please make a new signin request" });
-    return;
-  }
-  
-  const user_id = user.id;
-  const user_role = user.userType;
-
-  const newAccessToken = jwt.sign({ id: user_id, role: user_role }, config.secret, { expiresIn: config.jwtExpiration });
-
-  return respond(res, 200, { accessToken: newAccessToken, refreshToken: refreshToken.token });
 };
 
 exports.signout = async (req, res) => {
   const id = req.userId;
   try {
-    await RefreshToken.destroy({ where: { id } });
+    const user = await User.findOne({ where: { id } });
+    user.refreshToken = null;
+    await user.save();
+
     respond(res, 200, { message: "User was logged out!" });
   } catch(err) {
     respond(res, 500, { message: err.message });
@@ -121,7 +127,8 @@ exports.signup = async (req, res) => {
     password: hashedPassword,
     userType: 'User',
     isVerified: false,
-    verificationToken: verificationCode 
+    verificationToken: hashedVerificationCode,
+    major
   };
 
   const user = await userController.create({ ...req, body: newBody });
@@ -152,17 +159,20 @@ exports.confirmationPost = async (req, res) => {
   if (!user.verificationToken){
     return respond(res, 400, {message: "User already verified"});
   }
-  const isValid = authService.verifyToken(code, user.verificationToken); 
+  const isValid = authService.verifyPassword(code, user.verificationToken); 
   
   if (!isValid) {
     return respond(res, 400, {message: "Invalid token"});
   }
-
+  // set user as verified 
   user.isVerified = true;
   user.verificationToken = null;
-  await user.save();
-
+  
+  // store refresh token in user database
   const { accessToken, refreshToken } = await authService.createToken(user, user.userType);
+  user.refreshToken = refreshToken;
+
+  await user.save();
 
   return res.status(200).send({
     id: user.id,
@@ -177,9 +187,8 @@ exports.confirmationPost = async (req, res) => {
 exports.confirmationAdmin = async (req, res) => {
   const accessToken = req.headers['authorization'].split(' ')[1];
 
-  jwt.verify(accessToken, config.secret, (err, decoded) => {
+  jwt.verify(accessToken, config.jwt.secret, (err, decoded) => {
     if (err) {
-      // will never fire, cause checked in authJwt
       return res.status(401).send({ message: "Unauthorized! Access Token was expired!" });
     }
     User.findOne({ where: { id: decoded.id } }).then((user) => {

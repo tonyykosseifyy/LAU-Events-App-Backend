@@ -18,7 +18,6 @@ const dashboardRouter = require('./routes/dashboard');
 
 
 const authRouter = require("./routes/auth");
-const tokenRouter = require("./routes/refreshToken");
 
 const { isAuthenticated, isAdmin } = require("./middlewares/authJwt");
 
@@ -53,7 +52,6 @@ app.use('/users', userRouter);
 app.use('/clubEvents', clubEventRouter);
 app.use('/userEvents', userEventsRouter)
 app.use("/auth", authRouter);
-app.use("/refreshToken", tokenRouter);
 
 
 // catch 404 and forward to error handler

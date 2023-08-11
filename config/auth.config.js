@@ -1,5 +1,10 @@
 module.exports = {
-  secret: "lau-event-secret-key",
-  jwtExpiration: 60 * 15 ,           // 15 min 
-  jwtRefreshExpiration: 60 * 15 * 60 ,   // 15 hour 
+  jwt: {
+    secret: "lau-event-secret-key",
+    expiration: 60 * 15 ,           // 15 min 
+  },
+  refresh: {
+    secret: "lau-event-secret-key-refresh",
+    expiration: 60 * 60 * 24 * 30, // 30 days
+  }
 };
