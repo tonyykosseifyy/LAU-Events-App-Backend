@@ -147,21 +147,26 @@ const getAllDeclinedEvents = async (req, res, next) => {
   try {
     const userId = req.userId;
 
-    const declinedEvents = await UserEvent.findAll({
-      attributes: ['eventId', 'responseTime'],
-      where: {
-        userId,
-        status: "Declined"
-      },
+    // GET all events that this user declined 
+    const declinedEvents = await Event.findAll({
       include: [
         {
-          model: Event,
+          model: User,
+          attributes: [],
+          through: {
+            attributes: [],
+            where: { status: 'Declined' },
+          },
+          where: {
+            id: userId,
+          },
         },
       ],
     });
-      return respond(res, 200, declinedEvents);
+
+    return respond(res, 200, declinedEvents);
   } catch (err) {
-      return respond(res, 500, err);
+    return respond(res, 500, err);
   }
 }
 
