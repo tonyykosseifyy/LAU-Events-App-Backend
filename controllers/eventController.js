@@ -11,7 +11,15 @@ const getOneEvent = async (req, res, next) => {
   // get the event, and include if its accepted or declined by this user 
   const userId = req.userId ;
   try {
-    const event = await Event.findByPk(req.params.id, {}) ;
+    const event = await Event.findByPk(req.params.id, {
+      include: [
+        {
+          model: Club,
+          attributes: ["clubName"],
+          through: { attributes: [] },
+        }
+      ],
+    }) ;
 
     if (!event) {
       return respond(res, 404, { message: "Event not found" });
