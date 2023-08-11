@@ -44,7 +44,6 @@ app.use((req, res, next) => {
 
 require('./services/swagger.service.js')(app);
 app.use('/', indexRouter);
-// app.use('/admins', adminRouter);
 app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
 app.use('/dashboard', dashboardRouter);
