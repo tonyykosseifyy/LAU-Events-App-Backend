@@ -1,13 +1,37 @@
-const { Event, Club, User, UserEvent } = require("../models");
+const { Event, UserEvent } = require("../models");
 const defaultCruds = require("./defaultCruds.js");
 const respond = require("../utils/respond.js");
 
 const getAll = defaultCruds.getAll(UserEvent)
 const getOne = defaultCruds.getOne(UserEvent)
-const update = defaultCruds.update(UserEvent)
 const deleteOne = defaultCruds.deleteOne(UserEvent)
 
 
+const update = async (req, res, next) => {
+    const userId = req.userId;
+    const eventId = req.params.id;
+    const status = req.body.status;
+    try {
+        const userEvent = await UserEvent.findOne({
+            where: {
+                eventId,
+                userId,
+            },
+        });
+        if (!userEvent) {
+            return respond(res, 404, { message: "UserEvent not found" });
+        }
+        if (userEvent.status === status) {
+            return respond(res, 400, { message: `User already ${status} the event` });
+        }
+        userEvent.status = status;
+        await userEvent.save();
+
+        res && respond(res, 200, userEvent);
+    } catch (err) {
+        return respond(res, 500, err);
+    }
+}
 const create = async (req, res, next) => {
     try {
         const userId = req.userId;
