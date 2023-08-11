@@ -7,8 +7,6 @@ require("./utils/database");
 
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-// const adminRouter = require('./routes/admin');
 const clubRouter = require('./routes/club');
 const eventRouter = require('./routes/event');
 const userRouter = require('./routes/users');
