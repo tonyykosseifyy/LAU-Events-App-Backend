@@ -1,3 +1,5 @@
+const majors = require("../utils/majors");
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     id: {
@@ -30,8 +32,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    major:{
-      type: DataTypes.STRING,
+    major: {
+      type: DataTypes.ENUM(...majors),
       allowNull:true
     }
   });

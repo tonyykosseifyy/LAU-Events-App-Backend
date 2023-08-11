@@ -105,7 +105,7 @@ exports.signout = async (req, res) => {
 };
 
 exports.signup = async (req, res) => {
-  const { email, password, major } = req.body;
+  const { email, password } = req.body;
 
   const old_user = await User.findOne({
     where: {
@@ -128,10 +128,9 @@ exports.signup = async (req, res) => {
     userType: 'User',
     isVerified: false,
     verificationToken: hashedVerificationCode,
-    major
   };
 
-  const user = await userController.create({ ...req, body: newBody });
+  const user = await User.create(newBody);
 
   respond(res, 201, { message: `A verification email has been sent to ${email}. Please check your email. If you can't find a verification code, you can request to resend a new one.`, userId: user.id });
 
@@ -139,6 +138,7 @@ exports.signup = async (req, res) => {
     console.error(`Failed to send verification email to ${email}: ${err.message}`);
   });
 };
+
 
 exports.confirmationPost = async (req, res) => {
   const { error, value } = codeSchema.validate(req.body);

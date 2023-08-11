@@ -8,16 +8,10 @@ const deleteOne = defaultCruds.deleteOne(UserEvent)
 
 
 const update = async (req, res, next) => {
-    const userId = req.userId;
-    const eventId = req.params.id;
+    const userEventId = req.params.id;
     const status = req.body.status;
     try {
-        const userEvent = await UserEvent.findOne({
-            where: {
-                eventId,
-                userId,
-            },
-        });
+        const userEvent = await UserEvent.findByPk(userEventId);
         if (!userEvent) {
             return respond(res, 404, { message: "UserEvent not found" });
         }
