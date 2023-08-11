@@ -4,7 +4,20 @@ const respond = require("../utils/respond.js");
 
 
 const update = defaultCruds.update(Event);
-const deleteOne = defaultCruds.deleteOne(Event);
+const deleteOne = async (req, res, next) => {
+  try {
+    const event = await Event.findByPk(req.params.id);
+    if (!event) {
+      return respond(res, 404, { message: "Event not found" });
+    }
+    await event.setClubs([]);
+    // delete the event
+    await event.destroy();
+    res && respond(res, 200, { message: "Event deleted successfully" });
+  } catch (err) {
+    next(err);
+  }
+}
 
 const getOneEvent = async (req, res, next) => {
   // get the event, and include if its accepted or declined by this user 
