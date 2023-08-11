@@ -151,6 +151,11 @@ const getAllDeclinedEvents = async (req, res, next) => {
     const declinedEvents = await Event.findAll({
       include: [
         {
+          model: Club,
+          attributes: ["clubName"],
+          through: { attributes: [] },
+        },
+        {
           model: User,
           attributes: [],
           through: {
