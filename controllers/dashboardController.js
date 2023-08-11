@@ -12,19 +12,18 @@ const getDashboardStats = async (req, res, next) => {
     const acceptanceCount = await UserEvent.count({
       where: { status: "Accepted" },
     });
-    const userEventsCount = await UserEvent.count();
+    const userEventsCount = await UserEvent.count()
 
     const declinedCount = await UserEvent.count({
       where: { status: "Declined" },
     });
-
-    const accpetanceRate = Math.round(acceptanceCount / userEventsCount) * 100 ;
-    const declineRate = Math.round(declinedCount / userEventsCount) * 100 ;
+    const acceptanceRate = Math.round(( acceptanceCount / userEventsCount ) * 100 ) ;
+    const declineRate = Math.round( ( declinedCount / userEventsCount ) * 100 ) ;
 
     const stats = {
       eventCount,
       clubCount,
-      accpetanceRate, 
+      acceptanceRate, 
       declineRate,
     };
 
