@@ -27,15 +27,32 @@ const getOne = async (req, res, next) => {
         next(err);
     }
 }
-const create = defaultCruds.create(User)
-const update = defaultCruds.update(User)
+const update = async (req, res, next) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user){
+            return respond(res, 404, {message: "Item not found"})
+        }
+        const updated_user = await user.update(req.body);
+        res && respond(res, 200, {
+            id: updated_user.id,
+            email: updated_user.email,
+            major: updated_user.major,
+            isVerified: updated_user.isVerified,
+            userType: updated_user.userType,
+            createdAt: updated_user.createdAt,
+            updatedAt: updated_user.updatedAt
+        });
+    } catch (err) {
+        next(err);
+    }
+}
 const deleteOne = defaultCruds.deleteOne(User)
 const findOne = defaultCruds.findOne(User)
 
 module.exports = {
     getAll,
     getOne,
-    create,
     update,
     deleteOne,
     findOne
