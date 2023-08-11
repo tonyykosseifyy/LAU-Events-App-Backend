@@ -178,11 +178,12 @@ router.get('/:id', validate([{ schema: getOneSchema, property: 'params' }]), use
  *      '500':
  *        description: Server error
  */
+// currently not available 
 
-router.put('/:id', validate([
-    { schema: updateSchema.params, property: 'params' },
-    { schema: updateSchema.body, property: 'body' },
-]), userController.update);
+// router.put('/:id', validate([
+//     { schema: updateSchema.params, property: 'params' },
+//     { schema: updateSchema.body, property: 'body' },
+// ]), userController.update);
 
 /**
  * @swagger
@@ -206,6 +207,8 @@ router.put('/:id', validate([
  *        description: Server error
  */
 
-router.delete('/:id', validate([{ schema: getOneSchema, property: 'params' }]), userController.deleteOne);
+// currently not available 
+
+// router.delete('/:id', validate([{ schema: getOneSchema, property: 'params' }]), userController.deleteOne);
 
 module.exports = router;
