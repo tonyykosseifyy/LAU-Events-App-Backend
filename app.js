@@ -45,8 +45,8 @@ require('./services/swagger.service.js')(app);
 app.use('/', indexRouter);
 app.use('/clubs', clubRouter);
 app.use('/events', eventRouter);
-app.use('/dashboard', dashboardRouter);
-app.use('/users', userRouter);
+app.use('/dashboard', isAdmin, dashboardRouter);
+app.use('/users', isAdmin, userRouter);
 app.use('/clubEvents', clubEventRouter);
 app.use('/userEvents', userEventsRouter)
 app.use("/auth", authRouter);

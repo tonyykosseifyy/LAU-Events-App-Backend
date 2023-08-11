@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController.js');
 const validate = require('../middlewares/validate');
-const { getOneSchema, createSchema, updateSchema } = require('../validations/users.validation');
+const { getOneSchema } = require('../validations/users.validation');
 
 /**
  * @swagger

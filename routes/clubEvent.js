@@ -3,6 +3,7 @@ const router = express.Router();
 const clubEventController = require('../controllers/clubEventController.js');
 const validate = require('../middlewares/validate');
 const { getOneSchema, createSchema, updateSchema, deleteOneSchema } = require('../validations/clubEvent.validation');
+const { isAdmin } = require('../middlewares/authJwt.js');
 
 /**
  * @swagger
@@ -117,7 +118,7 @@ router.get('/:id', validate([{ schema: getOneSchema, property: 'params' }]), clu
  *        description: Server error
  */
 
-router.post('/', validate([{ schema: createSchema, property: 'body' }]), clubEventController.create);
+router.post('/',isAdmin, validate([{ schema: createSchema, property: 'body' }]), clubEventController.create);
 
 /**
  * @swagger
@@ -169,7 +170,7 @@ router.post('/', validate([{ schema: createSchema, property: 'body' }]), clubEve
  *        description: Server error
  */
 
-router.put('/:id', validate([
+router.put('/:id',isAdmin, validate([
     { schema: updateSchema.params, property: 'params' },
     { schema: updateSchema.body, property: 'body' },
 ]), clubEventController.update);
@@ -206,6 +207,6 @@ router.put('/:id', validate([
  *        description: Server error
  */
 
-router.delete('/:id', validate([{ schema: deleteOneSchema, property: 'params' }]), clubEventController.deleteOne);
+router.delete('/:id',isAdmin, validate([{ schema: deleteOneSchema, property: 'params' }]), clubEventController.deleteOne);
 
 module.exports = router;

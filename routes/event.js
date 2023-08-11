@@ -3,6 +3,7 @@ const router = express.Router();
 const eventController = require('../controllers/eventController.js');
 const validate = require('../middlewares/validate.js');
 const { getOneSchema, createSchema, updateSchema } = require('../validations/event.validation.js');
+const { isAdmin } = require('../middlewares/authJwt.js');
 
 /**
  * @swagger
@@ -173,7 +174,7 @@ router.get('/:id', validate([{schema: getOneSchema, property: 'params'}]), event
  *        description: Server error
  */
 
-router.post('/', validate([{schema: createSchema, property: 'body'}]), eventController.create);
+router.post('/', isAdmin, validate([{schema: createSchema, property: 'body'}]), eventController.create);
 
 /**
  * @swagger
@@ -244,7 +245,7 @@ router.post('/', validate([{schema: createSchema, property: 'body'}]), eventCont
  *        description: Server error
  */
 
-router.put('/:id', validate([
+router.put('/:id', isAdmin,  validate([
     {schema: updateSchema.params, property: 'params'},
     {schema: updateSchema.body , property: 'body'}
 ]), eventController.update);
@@ -272,7 +273,7 @@ router.put('/:id', validate([
  *        description: Server error
  */
 
-router.delete('/:id', validate([{schema: getOneSchema, property: 'params'}]), eventController.deleteOne);
+router.delete('/:id',isAdmin, validate([{schema: getOneSchema, property: 'params'}]), eventController.deleteOne);
 
 /**
  * @swagger
@@ -338,7 +339,7 @@ router.delete('/:id', validate([{schema: getOneSchema, property: 'params'}]), ev
  *        description: Server error
  */
 
-router.get('/:id/details', eventController.getEventDetails);
+router.get('/:id/details',isAdmin, eventController.getEventDetails);
 
 /**
  * @swagger
@@ -354,6 +355,6 @@ router.get('/:id/details', eventController.getEventDetails);
  *        description: Server error
  */
 
-router.delete('/', eventController.deleteAll)
+router.delete('/',isAdmin, eventController.deleteAll)
 
 module.exports = router;

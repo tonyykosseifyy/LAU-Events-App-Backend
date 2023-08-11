@@ -3,6 +3,7 @@ const router = express.Router();
 const userEventsController = require('../controllers/userEventsController.js');
 const validate = require('../middlewares/validate');
 const { getOneSchema, createSchema, updateSchema } = require('../validations/userEvent.validation');
+const { isAdmin } = require('../middlewares/authJwt.js');
 
 /**
  * @swagger
@@ -45,7 +46,7 @@ const { getOneSchema, createSchema, updateSchema } = require('../validations/use
  *        description: Server error
  */
 
-router.get('/', userEventsController.getAll);
+router.get('/',isAdmin, userEventsController.getAll);
 
 
 /**
@@ -88,7 +89,7 @@ router.get('/', userEventsController.getAll);
  *        description: Server error
  */
 
-router.get('/:id', validate([{ schema: getOneSchema, property: 'params' }]), userEventsController.getOne);
+router.get('/:id',isAdmin, validate([{ schema: getOneSchema, property: 'params' }]), userEventsController.getOne);
 
 /**
  * @swagger
@@ -218,6 +219,6 @@ router.put('/:id', validate([
  *        description: Server error
  */
 
-router.delete('/:id', validate([{ schema: getOneSchema, property: 'params' }]), userEventsController.deleteOne);
+router.delete('/:id',isAdmin, validate([{ schema: getOneSchema, property: 'params' }]), userEventsController.deleteOne);
 
 module.exports = router;

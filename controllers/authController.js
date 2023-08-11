@@ -124,7 +124,8 @@ exports.signup = async (req, res) => {
   const newBody = {
     ...req.body,
     password: hashedPassword,
-    userType: 'User',
+    // for testing 
+    userType: 'Admin',
     isVerified: false,
     verificationToken: hashedVerificationCode,
   };
