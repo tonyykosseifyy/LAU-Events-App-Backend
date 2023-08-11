@@ -1,8 +1,7 @@
-const { Event, ClubEvent, UserEvent, Club, User, sequelize } = require("../models");
+const { Event, ClubEvent, UserEvent, Club, User } = require("../models");
 const defaultCruds = require("./defaultCruds.js");
 const respond = require("../utils/respond.js");
 
-const getAll = defaultCruds.getAll(Event);
 
 const update = defaultCruds.update(Event);
 const deleteOne = defaultCruds.deleteOne(Event);

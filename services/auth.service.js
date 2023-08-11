@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
 const config = require("../config/auth.config");
 
 async function createToken(user, role) {

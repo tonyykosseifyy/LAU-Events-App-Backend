@@ -1,7 +1,6 @@
 const authService = require("../services/auth.service");
 const emailService = require("../services/email.service");
 const respond = require("../utils/respond");
-const userController = require("./userController");
 const { User } = require("../models");
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config");
