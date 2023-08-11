@@ -155,9 +155,7 @@ exports.confirmationPost = async (req, res) => {
   } else if (user.isVerified) {
     return respond(res, 400, { message: "User already verified" });
   }
-  if (!user.verificationToken){
-    return respond(res, 400, {message: "User already verified"});
-  }
+
   const isValid = await authService.verifyPassword(code, user.verificationToken); 
   
   if (!isValid) {
