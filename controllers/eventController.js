@@ -107,7 +107,7 @@ const createEvent = async (req, res, next) => {
       status,
     });
 
-    if ( !clubIds || !Array.isArray(clubIds) || !clubIds.length ) {
+    if ( !clubIds || !Array.isArray(clubIds) || !clubIds.length || clubIds.length < 1 ) {
       return respond(res, 400, { message: "Clubs must be an array of club ids" });
     }
 
