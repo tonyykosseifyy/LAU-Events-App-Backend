@@ -6,6 +6,6 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: LAU_Event_App
-      MYSQL_ROOT_PASSWORD: '123'
+      MYSQL_ROOT_PASSWORD: '03018765'
     ports:
       - "3307:3306" # Change the first port number if you want to map to a different host port
