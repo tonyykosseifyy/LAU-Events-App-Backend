@@ -44,38 +44,10 @@ const getAllData = async (req, res, next) => {
             model: Event,
             attributes: [
               "eventDescription",
-              [
-                  Sequelize.literal(`CASE 
-                      WHEN \`UserEvent\`.\`status\` = 'Accepted' THEN DATE(\`UserEvent\`.\`createdAt\`)
-                      ELSE NULL
-                      END`
-                  ),
-                  'acceptedEventDate'
-              ],
-              [
-                  Sequelize.literal(`CASE 
-                      WHEN \`UserEvent\`.\`status\` = 'Accepted' THEN TIME(\`UserEvent\`.\`createdAt\`)
-                      ELSE NULL
-                      END`
-                  ),
-                  'acceptedEventTime'
-              ],
-              [
-                  Sequelize.literal(`CASE 
-                      WHEN \`UserEvent\`.\`status\` <> 'Accepted' THEN DATE(\`UserEvent\`.\`createdAt\`)
-                      ELSE NULL
-                      END`
-                  ),
-                  'declinedEventDate'
-              ],
-              [
-                  Sequelize.literal(`CASE 
-                      WHEN \`UserEvent\`.\`status\` <> 'Accepted' THEN TIME(\`UserEvent\`.\`createdAt\`)
-                      ELSE NULL
-                      END`
-                  ),
-                  'declinedEventTime'
-              ],
+              [Sequelize.fn('DATE', Sequelize.col('UserEvent.acceptedTime')), 'acceptedDate'],
+              [Sequelize.fn('TIME', Sequelize.col('UserEvent.acceptedTime')), 'acceptedTime'],
+              [Sequelize.fn('DATE', Sequelize.col('UserEvent.declinedTime')), 'declinedDate'],
+              [Sequelize.fn('TIME', Sequelize.col('UserEvent.declinedTime')), 'declinedTime'],
               [Sequelize.fn('DATE', Sequelize.col('UserEvent.rescheduledTime')), 'rescheduledDate'],
               [Sequelize.fn('TIME', Sequelize.col('UserEvent.rescheduledTime')), 'rescheduledTime']
             ],
