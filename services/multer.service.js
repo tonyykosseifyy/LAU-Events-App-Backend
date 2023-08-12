@@ -17,12 +17,12 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const extension = path.extname(file.originalname);
-    if (extension !== '.png' && extension !== '.jpg' && extension !== '.jpeg') {
-      return cb(new Error('Unsupported file type'), null);
-    }
+
+    const hash = crypto.createHash('sha256').update(file.originalname).digest('hex');
 
     const date = new Date().toISOString().replace(/:/g, '-');
-    cb(null, `${file.fieldname}-${date}${extension}`);
+
+    cb(null, `${file.fieldname}-${hash}-${date}${extension}`);
   }
 });
 
