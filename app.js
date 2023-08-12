@@ -13,6 +13,7 @@ const userRouter = require('./routes/users');
 const clubEventRouter = require('./routes/clubEvent');
 const userEventsRouter = require('./routes/userEvent');
 const dashboardRouter = require('./routes/dashboard');
+const uploadRouter = require('./routes/upload');
 
 
 const authRouter = require("./routes/auth");
@@ -50,6 +51,7 @@ app.use('/users', isAdmin, userRouter);
 app.use('/clubEvents', clubEventRouter);
 app.use('/userEvents', userEventsRouter)
 app.use("/auth", authRouter);
+app.use("/upload", uploadRouter)
 
 
 // catch 404 and forward to error handler

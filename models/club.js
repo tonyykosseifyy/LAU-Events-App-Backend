@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('active', 'inactive'),
       defaultValue: 'active',
       allowNull: false
+    },
+    imagePath: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
 
