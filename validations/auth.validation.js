@@ -35,7 +35,7 @@ const signupSchema = Joi.object({
         'string.email': 'Email must be a valid email address',
         'string.pattern.base': 'Email should end with @lau.edu or @lau.edu.lb'
     }),
-    password: Joi.string().required().min(8).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).messages({
+    password: Joi.string().required().min(8).pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/).messages({
         'string.empty': 'Password is required',
         'string.min': 'Password should have at least 8 characters',
         'string.pattern.base': 'Password should have at least one digit, one uppercase letter, one lowercase letter, and one special character'
