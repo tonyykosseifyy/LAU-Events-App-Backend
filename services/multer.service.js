@@ -1,10 +1,13 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
+
+const imageFileTypes = /jpeg|jpg|png/;
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const dir = '../images/';
+    const dir = path.join(__dirname, '..', 'images');
 
     fs.access(dir, fs.constants.F_OK, (err) => {
       if (err) {
@@ -26,9 +29,18 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 1024 * 1024 * 5 },
-}).single('file');
+const fileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (imageFileTypes.test(ext)) {
+    return cb(null, true);
+  }
+  cb(new Error('Only images are allowed'), false);
+};
 
-module.exports = upload;
+module.exports = {
+  upload: multer({
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 },
+    fileFilter: fileFilter, 
+  }).single('file')
+};
