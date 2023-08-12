@@ -15,6 +15,7 @@ const getWithEvents = async (req, res, next) => {
                 {
                   model: Event,
                   through: { attributes: [] }, 
+                  as: 'events'
                 },
             ],
         });

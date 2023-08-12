@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     Club.belongsToMany(models.Event, {
       through: models.ClubEvent,
       foreignKey: 'clubId',
+      as: 'events',
     });
   };
 
