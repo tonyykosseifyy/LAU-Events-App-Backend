@@ -30,17 +30,6 @@ const getDashboardStats = async (req, res, next) => {
   }
 }
 
-// Date registered (date student signed up to the app.)
-// St. Major   
-// Event Description
-// Scheduled event (Date student scheduled event to calendar)
-// Time Scheduled (Time student scheduled event to calendar)
-// Declined event (Date student declined event to calendar)
-// Time Declined (Time student declined event to calendar)
-// Declined and then Scheduled (Date scheduled after declining)
-// Time Scheduled after declining
-// (date and time separated, not merged)
-
 const getAllData = async (req, res, next) => {
   try {
       const userEvents = await UserEvent.findAll({ 
@@ -87,6 +76,8 @@ const getAllData = async (req, res, next) => {
                   ),
                   'declinedEventTime'
               ],
+              [Sequelize.fn('DATE', Sequelize.col('UserEvent.rescheduledTime')), 'rescheduledDate'],
+              [Sequelize.fn('TIME', Sequelize.col('UserEvent.rescheduledTime')), 'rescheduledTime']
             ],
             as: 'event',
           }

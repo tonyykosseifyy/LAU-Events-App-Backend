@@ -18,7 +18,17 @@ const update = async (req, res, next) => {
         if (userEvent.status === status) {
             return respond(res, 400, { message: `User already ${status} the event` });
         }
+        if ( status === 'Accepted' && userEvent.status === 'Declined' ) {
+            userEvent.isRescheduled = true ;
+            userEvent.rescheduledTime = new Date() ;
+        }
+        if ( status === 'Declined' && userEvent.status === 'Accepted' && userEvent.isRescheduled ) {
+            userEvent.isRescheduled = false ;
+            userEvent.rescheduledTime = null ;
+        }
+
         userEvent.status = status;
+
         await userEvent.save();
 
         res && respond(res, 200, userEvent);

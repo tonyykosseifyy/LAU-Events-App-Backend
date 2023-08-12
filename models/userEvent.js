@@ -25,10 +25,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('Ignored', 'Accepted', 'Declined'),
       allowNull: false
     },
-    responseTime: {
+    isRescheduled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    rescheduledTime: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW
+      allowNull: true
     }
   });
 
