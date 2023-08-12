@@ -107,12 +107,17 @@ const createEvent = async (req, res, next) => {
       status,
     });
 
-    if (clubIds && Array.isArray(clubIds)) {
-      const clubs = await Club.findAll({
-        where: { id: clubIds }
-      });
-      await event.setClubs(clubs);
+    if ( !clubIds || !Array.isArray(clubIds) || !clubIds.length ) {
+      return respond(res, 400, { message: "Clubs must be an array of club ids" });
     }
+
+    const clubs = await Club.findAll({
+      where: { id: clubIds }
+    });
+    if ( !clubs || !Array.isArray(clubs) || !clubs.length ) {
+      return respond(res, 400, { message: "Clubs must be an array of club ids" });
+    }
+    await event.setClubs(clubs);
 
     res.status(201).json(event);
 
