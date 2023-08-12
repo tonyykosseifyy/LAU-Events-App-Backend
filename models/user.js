@@ -42,11 +42,8 @@ module.exports = (sequelize, DataTypes) => {
     User.belongsToMany(models.Event, {
       through: models.UserEvent,
       foreignKey: 'userId',
+      as: 'events'
     });
-    User.associate = function(models) {
-      User.hasOne(models.RefreshToken);
-    };
-    
   };
 
   return User;

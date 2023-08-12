@@ -221,4 +221,5 @@ router.put('/:id', validate([
 
 router.delete('/:id',isAdmin, validate([{ schema: getOneSchema, property: 'params' }]), userEventsController.deleteOne);
 
+
 module.exports = router;
