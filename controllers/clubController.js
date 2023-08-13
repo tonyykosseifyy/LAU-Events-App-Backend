@@ -20,7 +20,7 @@ const getWithEvents = async (req, res, next) => {
             ],
         });
         if (!club){
-            return respond(res, 404, {message: "Item not found"})
+            return respond(res, 404, {message: "Club not found. Please check the provided ID."})
         }
 
         res && respond(res, 200, club)
