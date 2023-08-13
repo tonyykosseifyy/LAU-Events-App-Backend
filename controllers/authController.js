@@ -26,13 +26,21 @@ exports.signin = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(404).send({ message: "User not found, please sign up." });
+    return res
+      .status(404)
+      .send({
+        message:
+          "Email not found. Please sign up if you don't have an account.",
+      });
   }
 
   if (!user.isVerified) {
     return res
       .status(404)
-      .send({ message: "User not verified, please verify your account" });
+      .send({
+        message:
+          "Account not verified. Please check your email to verify your account.",
+      });
   }
 
   const passwordIsValid = await authService.verifyPassword(
@@ -78,7 +86,8 @@ exports.refreshToken = async (req, res) => {
   jwt.verify(requestToken, config.refresh.secret, (err, decoded) => {
     if (err) {
       return respond(res, 403, {
-        message: "Unauthorized, Refresh Token expired.",
+        message:
+          "Unauthorized. Refresh Token has expired. Please log in again.",
       });
     }
     User.findOne({
@@ -127,7 +136,7 @@ exports.signup = async (req, res) => {
     },
   });
   if (old_user && old_user.isVerified) {
-    return respond(res, 400, { message: "Failed! Email already in use." });
+    return respond(res, 400, { message: "Email is already in use. If you have already registered, please log in or reset your password." });
   }
   if (old_user && !old_user.isVerified) {
     await old_user.destroy();
@@ -173,10 +182,10 @@ exports.confirmationPost = async (req, res) => {
   if (!user) {
     return respond(res, 400, {
       message:
-        "We were unable to find a user for this verification, please Sign Up.",
+      "User not found for this verification code. Please sign up if you don't have an account.",
     });
   } else if (user.isVerified) {
-    return respond(res, 400, { message: "User already verified" });
+    return respond(res, 400, { message: "This user is already verified. Please log in."});
   }
 
   const isValid = await authService.verifyPassword(
@@ -185,7 +194,7 @@ exports.confirmationPost = async (req, res) => {
   );
 
   if (!isValid) {
-    return respond(res, 400, { message: "Invalid token" });
+    return respond(res, 400, { message: "Invalid verification code. Please try again or request a new code." });
   }
   // set user as verified
   user.isVerified = true;
