@@ -129,7 +129,7 @@ exports.signout = async (req, res) => {
 
 exports.signup = async (req, res) => {
   const { email, password } = req.body;
-
+  
   const old_user = await User.findOne({
     where: {
       email: email,
@@ -141,10 +141,10 @@ exports.signup = async (req, res) => {
   if (old_user && !old_user.isVerified) {
     await old_user.destroy();
   }
-
+  
   const { verificationCode, hashedVerificationCode } =
-    await emailService.createVerificationToken();
-
+  await emailService.createVerificationToken();
+  
   const hashedPassword = await authService.hashPassword(password);
   const newBody = {
     ...req.body,
@@ -154,7 +154,7 @@ exports.signup = async (req, res) => {
     isVerified: false,
     verificationToken: hashedVerificationCode,
   };
-
+  
   const user = await User.create(newBody);
 
   respond(res, 201, {

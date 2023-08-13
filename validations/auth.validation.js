@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const majors = require('../utils/majors');
 
 // Validation schema for POST /signin
 const signinSchema = Joi.object({
@@ -28,7 +29,7 @@ const verifySchema = Joi.object({
         'string.empty': 'Code is required'
     })
 });
-
+// signup schema
 const signupSchema = Joi.object({
     email: Joi.string().email().required().pattern(/@(lau\.edu|lau\.edu\.lb)$/).messages({
         'string.empty': 'Email is required',
@@ -40,8 +41,9 @@ const signupSchema = Joi.object({
         'string.min': 'Password should have at least 8 characters',
         'string.pattern.base': 'Password should have at least one digit, one uppercase letter, one lowercase letter, and one special character'
     }),
-    major: Joi.string().required().example('Computer Science').messages({
-        'string.empty': 'Major is required'
+    major: Joi.string().valid(...majors).required().example('Computer Science').messages({
+        'string.empty': 'Major is required',
+        'any.only': 'Major must be one of the following: ' + majors.join(', ')
     })
 });
 
