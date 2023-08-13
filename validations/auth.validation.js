@@ -29,7 +29,7 @@ const verifySchema = Joi.object({
         'string.empty': 'Code is required'
     })
 });
-
+// signup schema
 const signupSchema = Joi.object({
     email: Joi.string().email().required().pattern(/@(lau\.edu|lau\.edu\.lb)$/).messages({
         'string.empty': 'Email is required',
