@@ -4,66 +4,88 @@ const { Sequelize } = require("../models");
 
 const getDashboardStats = async (req, res, next) => {
   try {
-
     const eventCount = await Event.count();
     const clubCount = await Club.count();
 
-    // acceptance rate 
+    // acceptance rate
     const acceptanceCount = await UserEvent.count({
       where: { status: "Accepted" },
     });
-    const userEventsCount = await UserEvent.count()
+    const userEventsCount = await UserEvent.count();
 
-    const acceptanceRate = Math.round(( acceptanceCount / userEventsCount ) * 100 ) ;
+    const acceptanceRate = Math.round(
+      (acceptanceCount / userEventsCount) * 100
+    );
     const declineRate = 100 - acceptanceRate;
 
     const stats = {
       eventCount,
       clubCount,
-      acceptanceRate, 
+      acceptanceRate,
       declineRate,
     };
 
     res && respond(res, 200, stats);
-  } catch(err) {
-    return respond(res, 500, err);
+  } catch (err) {
+    return respond(res, 500, {
+      messsage: "An error occurred while retrieving dashboard statistics.",
+    });
   }
-}
+};
 
 const getAllData = async (req, res, next) => {
   try {
-      const userEvents = await UserEvent.findAll({ 
-        attributes: [],
-        include: [
-          {
-            model: User,
-            attributes: ["createdAt","major"],
-            as: 'user'
-          },
-          {
-            model: Event,
-            attributes: [
-              "eventDescription",
-              [Sequelize.fn('DATE', Sequelize.col('UserEvent.acceptedTime')), 'acceptedDate'],
-              [Sequelize.fn('TIME', Sequelize.col('UserEvent.acceptedTime')), 'acceptedTime'],
-              [Sequelize.fn('DATE', Sequelize.col('UserEvent.declinedTime')), 'declinedDate'],
-              [Sequelize.fn('TIME', Sequelize.col('UserEvent.declinedTime')), 'declinedTime'],
-              [Sequelize.fn('DATE', Sequelize.col('UserEvent.rescheduledTime')), 'rescheduledDate'],
-              [Sequelize.fn('TIME', Sequelize.col('UserEvent.rescheduledTime')), 'rescheduledTime']
+    const userEvents = await UserEvent.findAll({
+      attributes: [],
+      include: [
+        {
+          model: User,
+          attributes: ["createdAt", "major"],
+          as: "user",
+        },
+        {
+          model: Event,
+          attributes: [
+            "eventDescription",
+            [
+              Sequelize.fn("DATE", Sequelize.col("UserEvent.acceptedTime")),
+              "acceptedDate",
             ],
-            as: 'event',
-          }
-        ]
-      });
-      res && respond(res, 200, userEvents);
+            [
+              Sequelize.fn("TIME", Sequelize.col("UserEvent.acceptedTime")),
+              "acceptedTime",
+            ],
+            [
+              Sequelize.fn("DATE", Sequelize.col("UserEvent.declinedTime")),
+              "declinedDate",
+            ],
+            [
+              Sequelize.fn("TIME", Sequelize.col("UserEvent.declinedTime")),
+              "declinedTime",
+            ],
+            [
+              Sequelize.fn("DATE", Sequelize.col("UserEvent.rescheduledTime")),
+              "rescheduledDate",
+            ],
+            [
+              Sequelize.fn("TIME", Sequelize.col("UserEvent.rescheduledTime")),
+              "rescheduledTime",
+            ],
+          ],
+          as: "event",
+        },
+      ],
+    });
+    res && respond(res, 200, userEvents);
   } catch (err) {
-      console.log(err);
-      return respond(res, 500, err);
+    console.log(err);
+    return respond(res, 500, {
+      message: "An error occurred while retrieving all data.",
+    });
   }
-}
-
+};
 
 module.exports = {
   getDashboardStats,
-  getAllData
+  getAllData,
 };
