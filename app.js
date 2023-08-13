@@ -13,7 +13,7 @@ const userRouter = require('./routes/users');
 const clubEventRouter = require('./routes/clubEvent');
 const userEventsRouter = require('./routes/userEvent');
 const dashboardRouter = require('./routes/dashboard');
-const uploadRouter = require('./routes/upload');
+const uploadRouter = require('./routes/upload.js');
 
 
 const authRouter = require("./routes/auth");
