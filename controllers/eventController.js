@@ -111,14 +111,14 @@ const createEvent = async (req, res, next) => {
     });
 
     if ( !clubIds || !Array.isArray(clubIds) || !clubIds.length || clubIds.length < 1 ) {
-      return respond(res, 400, { message: "Clubs must be an array of club ids" });
+      return respond(res, 400, { message: "Clubs must be an array of Club Id's" });
     }
 
     const clubs = await Club.findAll({
       where: { id: clubIds }
     });
     if ( !clubs || !Array.isArray(clubs) || !clubs.length ) {
-      return respond(res, 400, { message: "Clubs must be an array of club ids" });
+      return respond(res, 400, { message: "Clubs must be an array of Club Id's" });
     }
     await event.setClubs(clubs);
 
@@ -136,7 +136,7 @@ const deleteAll = async (req, res, next) => {
     await UserEvent.destroy({ where: {} });
     await Event.destroy({ where: {} });
 
-    return respond(res, 200, { message: "All events and associated records deleted successfully" });
+    return respond(res, 200, { message: "All events and associated records were deleted successfully" });
   } catch (err) {
     return respond(res, 500, err);
   }
