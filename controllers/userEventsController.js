@@ -12,7 +12,9 @@ const update = async (req, res, next) => {
   try {
     const userEvent = await UserEvent.findByPk(userEventId);
     if (!userEvent) {
-      return respond(res, 404, { message: "UserEvent not found" });
+      return respond(res, 404, {
+        message: "The user event with the specified ID was not found.",
+      });
     }
     if (userEvent.status === status) {
       return respond(res, 400, { message: `User already ${status} the event` });
@@ -34,7 +36,9 @@ const create = async (req, res, next) => {
     const status = req.body.status;
     const event = await Event.findByPk(eventId);
     if (!event) {
-      return respond(res, 404, { message: "Event not found" });
+      return respond(res, 404, {
+        message: "The event with the specified ID was not found.",
+      });
     }
 
     const oldUserEvent = await UserEvent.findOne({

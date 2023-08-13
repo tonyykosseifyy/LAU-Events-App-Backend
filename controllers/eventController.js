@@ -2,7 +2,6 @@ const { Event, ClubEvent, UserEvent, Club, User } = require("../models");
 const defaultCruds = require("./defaultCruds.js");
 const respond = require("../utils/respond.js");
 
-
 const update = defaultCruds.update(Event);
 const deleteOne = async (req, res, next) => {
   try {
@@ -17,11 +16,11 @@ const deleteOne = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 const getOneEvent = async (req, res, next) => {
-  // get the event, and include if its accepted or declined by this user 
-  const userId = req.userId ;
+  // get the event, and include if its accepted or declined by this user
+  const userId = req.userId;
   try {
     const event = await Event.findByPk(req.params.id, {
       include: [
@@ -29,10 +28,10 @@ const getOneEvent = async (req, res, next) => {
           model: Club,
           attributes: ["clubName"],
           through: { attributes: [] },
-          as: 'clubs'
-        }
+          as: "clubs",
+        },
       ],
-    }) ;
+    });
 
     if (!event) {
       return respond(res, 404, { message: "Event not found" });
@@ -45,16 +44,18 @@ const getOneEvent = async (req, res, next) => {
         eventId: req.params.id,
       },
     });
-    if ( userEvent ) {
+    if (userEvent) {
       event.dataValues.userStatus = userEvent.status;
       event.dataValues.userEventId = userEvent.id;
     }
 
     res && respond(res, 200, event);
   } catch (err) {
-    return respond(res, 500, err);
+    return respond(res, 500, {
+      message: "An error occurred while retrieving the event.",
+    });
   }
-}
+};
 
 const getEventDetails = async (req, res, next) => {
   try {
@@ -63,16 +64,16 @@ const getEventDetails = async (req, res, next) => {
         {
           model: Club,
           attributes: ["clubName"],
-          through: { attributes: [] }, 
-          as: 'clubs'
+          through: { attributes: [] },
+          as: "clubs",
         },
         {
           model: User,
           attributes: ["email"],
-          as: 'users',
+          as: "users",
           through: {
             attributes: [],
-            where: { status: "Accepted" }, 
+            where: { status: "Accepted" },
           },
         },
       ],
@@ -83,24 +84,27 @@ const getEventDetails = async (req, res, next) => {
     }
     // count the number of users who have declined the event
     const countDeclinedUser = await UserEvent.count({
-      where: { 
+      where: {
         eventId: req.params.id,
-        status: "Declined"
-       },
+        status: "Declined",
+      },
     });
 
-    // attach it to the response 
+    // attach it to the response
     event.dataValues.declinedUsers = countDeclinedUser;
 
     res && respond(res, 200, event);
   } catch (err) {
-    return respond(res, 500, err);
+    return respond(res, 500, {
+      message: "An error occurred while retrieving the event details.",
+    });
   }
 };
 
 const createEvent = async (req, res, next) => {
   try {
-    const { clubIds, eventName, eventDescription, startTime, endTime, status } = req.body;
+    const { clubIds, eventName, eventDescription, startTime, endTime, status } =
+      req.body;
 
     const event = await Event.create({
       eventName,
@@ -110,25 +114,36 @@ const createEvent = async (req, res, next) => {
       status,
     });
 
-    if ( !clubIds || !Array.isArray(clubIds) || !clubIds.length || clubIds.length < 1 ) {
-      return respond(res, 400, { message: "Clubs must be an array of Club Id's" });
+    if (
+      !clubIds ||
+      !Array.isArray(clubIds) ||
+      !clubIds.length ||
+      clubIds.length < 1
+    ) {
+      return respond(res, 400, {
+        message:
+          "Provided clubIds must be a non-empty array of existing Club IDs.",
+      });
     }
 
     const clubs = await Club.findAll({
-      where: { id: clubIds }
+      where: { id: clubIds },
     });
-    if ( !clubs || !Array.isArray(clubs) || !clubs.length ) {
-      return respond(res, 400, { message: "Clubs must be an array of Club Id's" });
+    if (!clubs || !Array.isArray(clubs) || !clubs.length) {
+      return respond(res, 400, {
+        message:
+          "Provided clubIds must be a non-empty array of existing Club IDs.",
+      });
     }
     await event.setClubs(clubs);
 
     res.status(201).json(event);
-
-  } catch(err) {
-    return respond(res, 500, err);
+  } catch (err) {
+    return respond(res, 500, {
+      message: { message: "An error occurred while creating the event." },
+    });
   }
-}
-
+};
 
 const deleteAll = async (req, res, next) => {
   try {
@@ -136,54 +151,59 @@ const deleteAll = async (req, res, next) => {
     await UserEvent.destroy({ where: {} });
     await Event.destroy({ where: {} });
 
-    return respond(res, 200, { message: "All events and associated records were deleted successfully" });
+    return respond(res, 200, {
+      message: "All events and associated records were deleted successfully",
+    });
   } catch (err) {
-    return respond(res, 500, err);
+    return respond(res, 500, {
+      message:
+        "An error occurred while deleting all events and associated records.",
+    });
   }
-}
+};
 
 const getAllEvents = async (req, res, next) => {
   try {
-    // return all events, with their clubs populated 
+    // return all events, with their clubs populated
     const events = await Event.findAll({
       include: [
         {
           model: Club,
           attributes: ["clubName"],
           through: { attributes: [] }, // Exclude the join table attributes
-          as: 'clubs'
+          as: "clubs",
         },
       ],
     });
 
     res && respond(res, 200, events);
-
-  } catch(err) {
-
-    return respond(res, 500, err);
+  } catch (err) {
+    return respond(res, 500, {
+      message: "An error occurred while retrieving all events.",
+    });
   }
-}
+};
 
 const getAllDeclinedEvents = async (req, res, next) => {
   try {
     const userId = req.userId;
 
-    // GET all events that this user declined 
+    // GET all events that this user declined
     const declinedEvents = await Event.findAll({
       include: [
         {
           model: Club,
           attributes: ["clubName"],
           through: { attributes: [] },
-          as: 'clubs'
+          as: "clubs",
         },
         {
           model: User,
           attributes: [],
-          as: 'users',
+          as: "users",
           through: {
             attributes: [],
-            where: { status: 'Declined' },
+            where: { status: "Declined" },
           },
           where: {
             id: userId,
@@ -194,9 +214,11 @@ const getAllDeclinedEvents = async (req, res, next) => {
 
     return respond(res, 200, declinedEvents);
   } catch (err) {
-    return respond(res, 500, err);
+    return respond(res, 500, {
+      message: "An error occurred while retrieving all declined events.",
+    });
   }
-}
+};
 
 module.exports = {
   getAll: getAllEvents,
@@ -206,5 +228,5 @@ module.exports = {
   deleteOne,
   getEventDetails,
   deleteAll,
-  getAllDeclinedEvents
+  getAllDeclinedEvents,
 };

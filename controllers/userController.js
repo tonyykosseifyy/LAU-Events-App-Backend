@@ -19,7 +19,7 @@ const getOne = async (req, res, next) => {
             attributes: ['id', 'email', 'major', 'isVerified', 'userType','createdAt', 'updatedAt']
         });
         if (!user){
-            return respond(res, 404, {message: "Item not found"})
+            return respond(res, 404, {message: 'User not found.'})
         }
 
         res && respond(res, 200, user);
@@ -31,7 +31,7 @@ const update = async (req, res, next) => {
     try {
         const user = await User.findByPk(req.params.id);
         if (!user){
-            return respond(res, 404, {message: "Item not found"})
+            return respond(res, 404, {message: "User not found"})
         }
         const updated_user = await user.update(req.body);
         res && respond(res, 200, {
