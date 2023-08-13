@@ -136,7 +136,7 @@ const deleteAll = async (req, res, next) => {
     await UserEvent.destroy({ where: {} });
     await Event.destroy({ where: {} });
 
-    return respond(res, 200, { message: "All events and associated records deleted successfully" });
+    return respond(res, 200, { message: "All events and associated records were deleted successfully" });
   } catch (err) {
     return respond(res, 500, err);
   }

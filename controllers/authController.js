@@ -26,13 +26,13 @@ exports.signin = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(404).send({ message: "User Not Found. Please Sign Up" });
+    return res.status(404).send({ message: "User not found, please sign up." });
   }
 
   if (!user.isVerified) {
     return res
       .status(404)
-      .send({ message: "User Not Verified . Please Verify Your Account" });
+      .send({ message: "User not verified, please verify your account" });
   }
 
   const passwordIsValid = await authService.verifyPassword(
@@ -78,7 +78,7 @@ exports.refreshToken = async (req, res) => {
   jwt.verify(requestToken, config.refresh.secret, (err, decoded) => {
     if (err) {
       return respond(res, 403, {
-        message: "Unauthorized, Your Refresh Token Was Expired!",
+        message: "Unauthorized, Refresh Token expired.",
       });
     }
     User.findOne({
@@ -112,7 +112,7 @@ exports.signout = async (req, res) => {
     user.refreshToken = null;
     await user.save();
 
-    respond(res, 200, { message: "User was logged out!" });
+    respond(res, 200, { message: "User was logged out." });
   } catch (err) {
     respond(res, 500, { message: err.message });
   }
@@ -127,7 +127,7 @@ exports.signup = async (req, res) => {
     },
   });
   if (old_user && old_user.isVerified) {
-    return respond(res, 400, { message: "Failed! Email is already in use!" });
+    return respond(res, 400, { message: "Failed! Email already in use." });
   }
   if (old_user && !old_user.isVerified) {
     await old_user.destroy();
@@ -149,7 +149,7 @@ exports.signup = async (req, res) => {
   const user = await User.create(newBody);
 
   respond(res, 201, {
-    message: `A verification email has been sent to ${email}. Please check your email. If you can't find a verification code, please request again.`,
+    message: `A verification email has been sent to ${email}. Please check your inbox. If you can't find a verification code, you may request again.`,
     userId: user.id,
   });
 
@@ -173,7 +173,7 @@ exports.confirmationPost = async (req, res) => {
   if (!user) {
     return respond(res, 400, {
       message:
-        "We were unable to find a user for this verification. Please SignUp!",
+        "We were unable to find a user for this verification, please Sign Up.",
     });
   } else if (user.isVerified) {
     return respond(res, 400, { message: "User already verified" });
@@ -217,7 +217,7 @@ exports.confirmationAdmin = async (req, res) => {
     if (err) {
       return res
         .status(401)
-        .send({ message: "Unauthorized! Access Token was expired!" });
+        .send({ message: "Unauthorized, Access Token was expired." });
     }
     User.findOne({ where: { id: decoded.id } })
       .then((user) => {
