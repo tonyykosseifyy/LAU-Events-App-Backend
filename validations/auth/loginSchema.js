@@ -17,9 +17,7 @@ const loginSchema = Joi.object({
     .min(8)
     .max(50)
     .pattern(
-      new RegExp(
-        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_])[A-Za-z\\d@$!%*?&]+$"
-      )
+      new RegExp(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/)
     )
     .message(
       '"{#label}" must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character.'

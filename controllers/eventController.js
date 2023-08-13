@@ -29,6 +29,7 @@ const getOneEvent = async (req, res, next) => {
           model: Club,
           attributes: ["clubName"],
           through: { attributes: [] },
+          as: 'clubs'
         }
       ],
     }) ;
@@ -63,10 +64,12 @@ const getEventDetails = async (req, res, next) => {
           model: Club,
           attributes: ["clubName"],
           through: { attributes: [] }, 
+          as: 'clubs'
         },
         {
           model: User,
           attributes: ["email"],
+          as: 'users',
           through: {
             attributes: [],
             where: { status: "Accepted" }, 
@@ -148,6 +151,7 @@ const getAllEvents = async (req, res, next) => {
           model: Club,
           attributes: ["clubName"],
           through: { attributes: [] }, // Exclude the join table attributes
+          as: 'clubs'
         },
       ],
     });
@@ -171,10 +175,12 @@ const getAllDeclinedEvents = async (req, res, next) => {
           model: Club,
           attributes: ["clubName"],
           through: { attributes: [] },
+          as: 'clubs'
         },
         {
           model: User,
           attributes: [],
+          as: 'users',
           through: {
             attributes: [],
             where: { status: 'Declined' },
