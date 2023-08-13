@@ -9,7 +9,6 @@ const {
   loginSchema,
   refreshTokenSchema,
 } = require("../validations/auth");
-const e = require("express");
 
 exports.signin = async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
