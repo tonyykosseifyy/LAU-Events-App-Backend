@@ -37,10 +37,32 @@ const fileFilter = (req, file, cb) => {
   cb(new Error('Only images are allowed'), false);
 };
 
+const fileValidation = (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).send({ message: 'Image file is required.' });
+  }
+  next();
+};
+
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1024 * 1024 * 5 },
+  fileFilter: fileFilter, 
+}).single('file');
+
+const handleUpload = (req, res, next) => {
+  upload(req, res, function(err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).send({ message: err.message });
+    } else if (err) {
+      return res.status(400).send({ message: err.message });
+    }
+    next();
+  });
+};
+
 module.exports = {
-  upload: multer({
-    storage: storage,
-    limits: { fileSize: 1024 * 1024 * 5 },
-    fileFilter: fileFilter, 
-  }).single('file')
+  upload: handleUpload,
+  fileValidation
 };
