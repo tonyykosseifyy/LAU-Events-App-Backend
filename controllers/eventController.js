@@ -103,8 +103,15 @@ const getEventDetails = async (req, res, next) => {
 
 const createEvent = async (req, res, next) => {
   try {
-    const { clubIds, eventName, eventDescription, startTime, endTime, status } =
-      req.body;
+    const {
+      clubIds,
+      eventName,
+      eventDescription,
+      startTime,
+      endTime,
+      status,
+      imagePath,
+    } = req.body;
 
     const event = await Event.create({
       eventName,
@@ -112,6 +119,7 @@ const createEvent = async (req, res, next) => {
       startTime,
       endTime,
       status,
+      imagePath,
     });
 
     if (
