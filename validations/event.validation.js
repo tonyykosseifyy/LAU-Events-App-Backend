@@ -26,6 +26,10 @@ const createSchema = Joi.object({
     "number.base": "Club IDs must be numbers.",
     "number.integer": "Club IDs must be integers.",
   }),
+  imagePath: Joi.string().required().messages({
+    "string.base": "Image path must be a string.",
+    "any.required": "Image path is required.",
+  }),
 });
 
 // Validation schema for PUT /:id
