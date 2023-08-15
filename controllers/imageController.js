@@ -3,7 +3,7 @@ const env = require("dotenv").config().parsed;
 const uploadImage = async (req, res) => {
   try {
     const fileName = req.file.filename;
-    const imageUrl = `${env.BACKEND_URL}/images/${fileName}`;
+    const imageUrl = `images/${fileName}`;
 
     return res
       .status(200)
@@ -18,7 +18,6 @@ const uploadImage = async (req, res) => {
 module.exports = {
   uploadImage,
 };
-
 
 module.exports = {
   uploadImage,
