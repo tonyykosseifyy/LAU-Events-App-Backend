@@ -52,6 +52,7 @@ app.use('/clubEvents', clubEventRouter);
 app.use('/userEvents', userEventsRouter)
 app.use("/auth", authRouter);
 app.use("/upload", uploadRouter)
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
 // catch 404 and forward to error handler
