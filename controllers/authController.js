@@ -9,6 +9,7 @@ const {
   loginSchema,
   refreshTokenSchema,
 } = require("../validations/auth");
+const e = require("express");
 
 exports.signin = async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
@@ -17,7 +18,8 @@ exports.signin = async (req, res) => {
     return res.status(400).json({ error: error.details[0].message });
   }
 
-  const { email, password } = value;
+  let { email, password } = value;
+  email = email.toLowerCase();
 
   const user = await User.findOne({
     where: {
@@ -128,7 +130,8 @@ exports.signout = async (req, res) => {
 };
 
 exports.signup = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = email.toLowerCase();
   
   const old_user = await User.findOne({
     where: {
