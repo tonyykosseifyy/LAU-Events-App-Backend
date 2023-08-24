@@ -26,8 +26,9 @@ const createSchema = Joi.object({
     "number.base": "Club IDs must be numbers.",
     "number.integer": "Club IDs must be integers.",
   }),
-  imagePath: Joi.string().required().messages({
+  imagePath: Joi.string().pattern(/^images\/[a-zA-Z0-9]+\.[a-zA-Z]{3,4}$/).required().messages({
     "string.base": "Image path must be a string.",
+    "string.pattern.base": "Image path must follow the pattern 'images/imageName.extension'.",
     "any.required": "Image path is required.",
   }),
 });
