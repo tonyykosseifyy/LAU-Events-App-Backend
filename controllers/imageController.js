@@ -2,9 +2,9 @@ const env = require("dotenv").config().parsed;
 
 const uploadImage = async (req, res) => {
   try {
-    console.log("here")
     const fileName = req.file.filename;
     const imageUrl = `images/${fileName}`;
+    console.log(imageUrl);
 
     return res
       .status(200)
