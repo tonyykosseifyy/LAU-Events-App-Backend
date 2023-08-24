@@ -20,9 +20,9 @@ const createSchema = Joi.object({
     "any.only": "Status must be either active or inactive.",
     "any.required": "Status is required.",
   }),
-  imagePath: Joi.string().pattern(/^images\/[a-zA-Z0-9]+\.[a-zA-Z]{3,4}$/).required().messages({
+  imagePath: Joi.string().pattern(/^images\/file-[a-fA-F0-9-]+-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d{3}Z(\.jpg|\.png|\.gif|\.bmp)$/).required().messages({
     "string.base": "Image path must be a string.",
-    "string.pattern.base": "Image path must follow the pattern 'images/imageName.extension'.",
+    "string.pattern.base": "Image path must follow the pattern 'images/file-{hexadecimal-hash}-{timestamp}.{extension}'.",
     "any.required": "Image path is required.",
   }),
 });
