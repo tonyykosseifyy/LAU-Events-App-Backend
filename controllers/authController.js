@@ -153,7 +153,7 @@ exports.signup = async (req, res) => {
     ...req.body,
     password: hashedPassword,
     // for testing
-    userType: "Admin",
+    userType: "User",
     isVerified: false,
     verificationToken: hashedVerificationCode,
   };
