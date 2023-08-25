@@ -232,7 +232,7 @@ router.post('/signout',isAuthenticated, authController.signout);
  *                  example: Error message
  */
 
-router.post('/signup', validate([{schema: signupSchema, property: 'body'}]), authController.signup);
+router.post('/signup', loginLimiter, validate([{schema: signupSchema, property: 'body'}]), authController.signup);
 
 /**
  * @swagger
