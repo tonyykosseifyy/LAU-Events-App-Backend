@@ -3,6 +3,7 @@ const uploadService = require('../services/multer.service');
 const imageController = require('../controllers/imageController');
 const router = express.Router();
 const validate = require('../middlewares/validate.js');
+const { isAdmin } = require('../middlewares/authJwt');
 
 /**
  * @swagger
@@ -48,6 +49,6 @@ const validate = require('../middlewares/validate.js');
  *        description: Server error
  */
 
-router.post('/', uploadService.upload, uploadService.fileValidation, imageController.uploadImage);
+router.post('/', isAdmin, uploadService.upload, uploadService.fileValidation, imageController.uploadImage);
 
 module.exports = router;
