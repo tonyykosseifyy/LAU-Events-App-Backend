@@ -5,6 +5,8 @@ const { isAuthenticated } = require('../middlewares/authJwt');
 const validate = require('../middlewares/validate');
 const { signinSchema, refreshTokenSchema, verifySchema, signupSchema } = require('../validations/auth.validation');
 const { property } = require('lodash');
+const { loginLimiter } = require('../middlewares/loginLimiter');
+
 
 /**
  * @swagger
@@ -76,7 +78,7 @@ const { property } = require('lodash');
  *                  example: Invalid Password!
  */
 
-router.post('/signin', validate([{schema: signinSchema, property: 'body'}]), authController.signin);
+router.post('/signin', loginLimiter, validate([{schema: signinSchema, property: 'body'}]), authController.signin);
 
 /**
  * @swagger
