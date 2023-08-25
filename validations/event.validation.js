@@ -26,7 +26,7 @@ const createSchema = Joi.object({
     "number.base": "Club IDs must be numbers.",
     "number.integer": "Club IDs must be integers.",
   }),
-  imagePath: Joi.string().pattern(/^images\/file-[a-fA-F0-9-]+-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d{3}Z(\.jpg|\.png|\.gif|\.bmp)$/).required().messages({
+  imagePath: Joi.string().pattern(/^images\/file-[a-fA-F0-9-]+-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d{3}Z(\.jpg|\.jpeg|\.png|\.gif|\.bmp)$/).required().messages({
     "string.base": "Image path must be a string.",
     "string.pattern.base": "Image path must follow the pattern 'images/file-{hexadecimal-hash}-{timestamp}.{extension}'.",
     "any.required": "Image path is required.",
