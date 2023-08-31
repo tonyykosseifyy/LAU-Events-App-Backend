@@ -151,6 +151,7 @@ exports.signup = async (req, res) => {
   const hashedPassword = await authService.hashPassword(password);
   const newBody = {
     ...req.body,
+    email,
     password: hashedPassword,
     // for testing
     userType: "User",
