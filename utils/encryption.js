@@ -8,7 +8,6 @@ const key = env.ENCRYPTION_KEY;
 const iv = env.ENCRYPTION_IV;
 
 const encrypt = (text) => {
-  console.log(key, iv);
   const cipher = crypto.createCipheriv(
     algorithm,
     Buffer.from(key, "hex"),

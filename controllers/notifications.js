@@ -7,7 +7,7 @@ const getNotificationTokens = async () => {
     const users = await User.findAll({
       attributes: ["notificationToken"],
     });
-    console.log("users: ", users)
+    console.log("users: ", users);
     return users
       .map((user) => user.notificationToken)
       .filter((token) => token !== null);
@@ -61,19 +61,21 @@ const handleReceipts = async (tickets, expo) => {
       const receipts = await expo.getPushNotificationReceiptsAsync(chunk);
       for (let receiptId in receipts) {
         const { status, details } = receipts[receiptId];
-        
+
         if (status === "error") {
           if (
             details &&
             (details.error === "DeviceNotRegistered" ||
-             details.error === "InvalidCredentials")
+              details.error === "InvalidCredentials")
           ) {
             // Nullify the token in your database
             await User.update(
               { notificationToken: null },
               { where: { notificationToken: receiptId } }
             );
-            console.error(`Token ${receiptId} set to null in db, details: ${details}`);
+            console.error(
+              `Token ${receiptId} set to null in db, details: ${details}`
+            );
           }
         }
       }
@@ -83,26 +85,21 @@ const handleReceipts = async (tickets, expo) => {
   }
 };
 
-
 // Main function to send notifications to all users
 const sendNotificationToAllUsers = async (event) => {
   const expo = new Expo();
-  
+
   // Get notification tokens
   const tokens = await getNotificationTokens();
-  console.log("tokens: ", tokens)
-  
+
   // Create messages
   const messages = createMessages(tokens, event);
-  console.log("messages: ", messages)
-  
+
   // Send messages and get tickets
   const tickets = await sendMessages(messages, expo);
-  console.log("tickets: ", tickets)
-  
+
   // Handle receipts
   await handleReceipts(tickets, expo);
-  console.log("here")
 };
 
 module.exports = sendNotificationToAllUsers;
