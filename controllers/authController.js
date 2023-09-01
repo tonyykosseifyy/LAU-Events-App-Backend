@@ -28,21 +28,16 @@ exports.signin = async (req, res) => {
   });
 
   if (!user) {
-    return res
-      .status(404)
-      .send({
-        message:
-          "Email not found. Please sign up if you don't have an account.",
-      });
+    return res.status(404).send({
+      message: "Email not found. Please sign up if you don't have an account.",
+    });
   }
 
   if (!user.isVerified) {
-    return res
-      .status(404)
-      .send({
-        message:
-          "Account not verified. Please check your email to verify your account.",
-      });
+    return res.status(404).send({
+      message:
+        "Account not verified. Please check your email to verify your account.",
+    });
   }
 
   const passwordIsValid = await authService.verifyPassword(
@@ -132,22 +127,25 @@ exports.signout = async (req, res) => {
 exports.signup = async (req, res) => {
   let { email, password } = req.body;
   email = email.toLowerCase();
-  
+
   const old_user = await User.findOne({
     where: {
       email: email,
     },
   });
   if (old_user && old_user.isVerified) {
-    return respond(res, 400, { message: "Email is already in use. If you have already registered, please log in or reset your password." });
+    return respond(res, 400, {
+      message:
+        "Email is already in use. If you have already registered, please log in or reset your password.",
+    });
   }
   if (old_user && !old_user.isVerified) {
     await old_user.destroy();
   }
-  
+
   const { verificationCode, hashedVerificationCode } =
-  await emailService.createVerificationToken();
-  
+    await emailService.createVerificationToken();
+
   const hashedPassword = await authService.hashPassword(password);
   const newBody = {
     ...req.body,
@@ -158,7 +156,7 @@ exports.signup = async (req, res) => {
     isVerified: false,
     verificationToken: hashedVerificationCode,
   };
-  
+
   const user = await User.create(newBody);
 
   respond(res, 201, {
@@ -186,10 +184,12 @@ exports.confirmationPost = async (req, res) => {
   if (!user) {
     return respond(res, 400, {
       message:
-      "User not found for this verification code. Please sign up if you don't have an account.",
+        "User not found for this verification code. Please sign up if you don't have an account.",
     });
   } else if (user.isVerified) {
-    return respond(res, 400, { message: "This user is already verified. Please log in."});
+    return respond(res, 400, {
+      message: "This user is already verified. Please log in.",
+    });
   }
 
   const isValid = await authService.verifyPassword(
@@ -198,7 +198,10 @@ exports.confirmationPost = async (req, res) => {
   );
 
   if (!isValid) {
-    return respond(res, 400, { message: "Invalid verification code. Please try again or request a new code." });
+    return respond(res, 400, {
+      message:
+        "Invalid verification code. Please try again or request a new code.",
+    });
   }
   // set user as verified
   user.isVerified = true;

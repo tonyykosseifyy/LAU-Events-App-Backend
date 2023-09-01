@@ -1,48 +1,60 @@
 const majors = require("../utils/majors");
+const { encrypt, decrypt } = require("../utils/encryption");
 
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
+  const User = sequelize.define("User", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     email: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false
+      allowNull: false,
     },
     userType: {
-      type: DataTypes.ENUM('Admin', 'User'),
-      allowNull: false
+      type: DataTypes.ENUM("Admin", "User"),
+      allowNull: false,
     },
     isVerified: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     },
     verificationToken: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     refreshToken: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     major: {
       type: DataTypes.ENUM(...majors),
-      allowNull:true
-    }
+      allowNull: true,
+    },
+    notificationToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      get() {
+        const rawValue = this.getDataValue("notificationToken");
+        return rawValue ? decrypt(rawValue) : null;
+      },
+      set(value) {
+        this.setDataValue("notificationToken", encrypt(value));
+      },
+    },
   });
 
-  User.associate = function(models) {
+  User.associate = function (models) {
     User.belongsToMany(models.Event, {
       through: models.UserEvent,
-      foreignKey: 'userId',
-      as: 'events'
+      foreignKey: "userId",
+      as: "events",
     });
   };
 

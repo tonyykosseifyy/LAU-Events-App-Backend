@@ -1,12 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
-const { isAuthenticated } = require('../middlewares/authJwt');
-const validate = require('../middlewares/validate');
-const { signinSchema, refreshTokenSchema, verifySchema, signupSchema } = require('../validations/auth.validation');
-const { property } = require('lodash');
-const { loginLimiter } = require('../middlewares/loginLimiter');
-
+const { isAuthenticated } = require("../middlewares/authJwt");
+const validate = require("../middlewares/validate");
+const {
+  signinSchema,
+  refreshTokenSchema,
+  verifySchema,
+  signupSchema,
+} = require("../validations/auth.validation");
+const { property } = require("lodash");
+const { loginLimiter } = require("../middlewares/loginLimiter");
 
 /**
  * @swagger
@@ -78,7 +82,12 @@ const { loginLimiter } = require('../middlewares/loginLimiter');
  *                  example: Invalid Password!
  */
 
-router.post('/signin', loginLimiter, validate([{schema: signinSchema, property: 'body'}]), authController.signin);
+router.post(
+  "/signin",
+  loginLimiter,
+  validate([{ schema: signinSchema, property: "body" }]),
+  authController.signin
+);
 
 /**
  * @swagger
@@ -130,7 +139,11 @@ router.post('/signin', loginLimiter, validate([{schema: signinSchema, property: 
  *                  type: string
  */
 
-router.post('/refreshToken', validate([{schema: refreshTokenSchema, property: 'body'}]), authController.refreshToken);
+router.post(
+  "/refreshToken",
+  validate([{ schema: refreshTokenSchema, property: "body" }]),
+  authController.refreshToken
+);
 
 /**
  * @swagger
@@ -168,7 +181,7 @@ router.post('/refreshToken', validate([{schema: refreshTokenSchema, property: 'b
  *                message:
  *                  type: string
  */
-router.post('/signout',isAuthenticated, authController.signout);
+router.post("/signout", isAuthenticated, authController.signout);
 
 /**
  * @swagger
@@ -197,6 +210,9 @@ router.post('/signout',isAuthenticated, authController.signout);
  *              major:
  *                type: string
  *                example: Computer Science
+ *              notificationToken:
+ *                type: string
+ *                example: "ExponentPushToken[XXXXXXXXXXXXXXXXXXXX]"
  *    responses:
  *      '201':
  *        description: Successfully registered
@@ -232,7 +248,12 @@ router.post('/signout',isAuthenticated, authController.signout);
  *                  example: Error message
  */
 
-router.post('/signup', loginLimiter, validate([{schema: signupSchema, property: 'body'}]), authController.signup);
+router.post(
+  "/signup",
+  loginLimiter,
+  validate([{ schema: signupSchema, property: "body" }]),
+  authController.signup
+);
 
 /**
  * @swagger
@@ -290,7 +311,11 @@ router.post('/signup', loginLimiter, validate([{schema: signupSchema, property: 
  *                  type: string
  */
 
-router.get('/confirmation/admin',isAuthenticated, authController.confirmationAdmin);
+router.get(
+  "/confirmation/admin",
+  isAuthenticated,
+  authController.confirmationAdmin
+);
 
 /**
  * @swagger
@@ -340,6 +365,10 @@ router.get('/confirmation/admin',isAuthenticated, authController.confirmationAdm
  *                  type: string
  */
 
-router.post('/verify', validate([{schema: verifySchema, property: 'body'}]), authController.confirmationPost);
+router.post(
+  "/verify",
+  validate([{ schema: verifySchema, property: "body" }]),
+  authController.confirmationPost
+);
 
 module.exports = router;
