@@ -1,6 +1,7 @@
 const { Event, ClubEvent, UserEvent, Club, User } = require("../models");
 const defaultCruds = require("./defaultCruds.js");
 const respond = require("../utils/respond.js");
+const sendNotificationToAllUsers = require("./notifications.js");
 
 const update = defaultCruds.update(Event);
 const deleteOne = async (req, res, next) => {
@@ -144,6 +145,13 @@ const createEvent = async (req, res, next) => {
       });
     }
     await event.setClubs(clubs);
+
+    // dont wait for this to finish
+    // sendNotificationToAllUsers(event);
+
+    setTimeout(() => {
+      sendNotificationToAllUsers(event);
+    }, 1000);
 
     res.status(201).json(event);
   } catch (err) {
