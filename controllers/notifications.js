@@ -55,10 +55,13 @@ const sendMessages = async (messages, expo) => {
 // Helper function to handle receipts and nullify invalid tokens
 const handleReceipts = async (tickets, expo) => {
   const receiptIds = tickets.map((ticket) => ticket.id).filter(Boolean);
+  console.log("receiptIds: ", receiptIds);
   const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
+  console.log("receiptIdChunks: ", receiptIdChunks);
   for (const chunk of receiptIdChunks) {
     try {
       const receipts = await expo.getPushNotificationReceiptsAsync(chunk);
+      console.log("receipts: ", receipts);
       for (let receiptId in receipts) {
         const { status, details } = receipts[receiptId];
 
