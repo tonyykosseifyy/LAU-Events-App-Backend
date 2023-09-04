@@ -87,19 +87,29 @@ const handleReceipts = async (tickets, expo) => {
 
 // Main function to send notifications to all users
 const sendNotificationToAllUsers = async (event) => {
+  console.log("Hi Elio");
   const expo = new Expo();
+  console.log("Initialized Expo");
 
   // Get notification tokens
   const tokens = await getNotificationTokens();
 
+  console.log("tokens: ", tokens);
+
   // Create messages
   const messages = createMessages(tokens, event);
+
+  console.log("messages: ", messages);
 
   // Send messages and get tickets
   const tickets = await sendMessages(messages, expo);
 
+  console.log("tickets: ", tickets);
+
   // Handle receipts
   await handleReceipts(tickets, expo);
+
+  console.log("Done");
 };
 
 module.exports = sendNotificationToAllUsers;
