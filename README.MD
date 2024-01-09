@@ -1,7 +1,8 @@
 # LAU Event App Backend API Documentation
 
 ## Overview
-The LAU Event App Backend API is designed to manage users, events, and clubs within the Lebanese American University. It facilitates interactions between students and the administrative body.
+
+The LAU Event App Backend API manages users, events, and clubs at the Lebanese American University. It serves as the backend for a corresponding frontend application.
 
 ## API Endpoints
 
@@ -135,3 +136,30 @@ The LAU Event App Backend API is designed to manage users, events, and clubs wit
 - **Get User by ID**
   - `GET /users/{id}`
   - Description: Retrieve a user by ID.
+
+
+## Related Repositories
+This backend API is part of a larger application. The corresponding frontend repository can be found [here](https://github.com/link-to-frontend-repo).
+
+## Built With
+- **bcryptjs** - Used for hashing passwords.
+- **cookie-parser** - Middleware for parsing cookies.
+- **dotenv** - Loads environment variables from a .env file.
+- **expo-server-sdk** - Server-side library for Expo SDK.
+- **express** - Web framework for Node.js.
+- **express-rate-limit** - Middleware for rate-limiting requests.
+- **jade** - Template engine for Node.js.
+- **joi** - Object schema description language and validator for JavaScript objects.
+- **joi-password-complexity** - Joi extension for password complexity validation.
+- **jsonwebtoken** - Implementation of JSON Web Tokens.
+- **lodash** - Utility library providing convenience methods for working with arrays, numbers, objects, strings, etc.
+- **lru-cache** - Least Recently Used (LRU) cache implementation.
+- **morgan** - HTTP request logger middleware.
+- **multer** - Middleware for handling `multipart/form-data`.
+- **mysql2** - MySQL client for Node.js.
+- **nodemailer** - Module for sending emails.
+- **sequelize** - Promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite, and Microsoft SQL Server.
+- **swagger-jsdoc** - Integrates Swagger using JSDoc comments in your source code.
+
+
+
